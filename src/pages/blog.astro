@@ -1,11 +1,13 @@
 ---
 import '@/styles/global.css'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import Greeting from '@/components/Greeting'
+const allPosts = await Astro.glob('./posts/*.md')
 
-const pageTitle = 'HOME'
+const pageTitle = 'BLOG'
 ---
 <BaseLayout pageTitle={pageTitle}>
   <h2>My awesome blog subtitle</h2>
-  <Greeting client:load messages={['Hej', 'Hallo', 'Hola', 'Habari']} />
+  <ul>
+    {allPosts.map(post => <li><a href={post.url}>{post.frontmatter.title}</a></li>)}
+  </ul>
 </BaseLayout>
