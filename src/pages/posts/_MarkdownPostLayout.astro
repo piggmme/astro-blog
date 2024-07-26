@@ -1,6 +1,19 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-const { frontmatter } = Astro.props
+import type { MarkdownLayoutProps } from 'astro'
+
+type Props = MarkdownLayoutProps<{
+  title: string
+  author: string
+  description: string
+  pubDate: string
+  image: {
+    url: string
+    alt: string
+  }
+}>
+
+const { frontmatter, headings } = Astro.props
 ---
 
 <BaseLayout pageTitle={frontmatter.title}>
@@ -8,5 +21,29 @@ const { frontmatter } = Astro.props
   <p><em>{frontmatter.description}</em></p>
   <p>Written by: {frontmatter.author}</p>
   <img src={frontmatter.image.url} width='300' alt={frontmatter.image.alt} />
+
+  {headings.length !== 0 && (
+    <ul>
+      {headings.map(head => (
+        <li>
+          <a href={`#${head.slug}`}>
+            {Array.from({ length: head.depth }, () => '#').join('')}
+            {head.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
   <slot />
 </BaseLayout>
+<style lang='scss'>
+  ul {
+    margin: 16px;
+    padding: 16px;
+    background-color: #f4f4f4;
+  }
+  a {
+    color: blue;
+    text-decoration: underline;
+  }
+</style>
