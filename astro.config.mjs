@@ -8,4 +8,13 @@ export default defineConfig({
   integrations: [react({
     experimentalReactChildren: true,
   })],
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "./global.scss";`,
+        },
+      },
+    },
+  },
 })

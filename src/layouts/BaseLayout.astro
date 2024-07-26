@@ -1,9 +1,7 @@
 ---
 import Footer from '@/components/Footer/Footer.astro'
-import Header from '@/components/Header/Header.astro'
-import '@/styles/global.css'
 
-const { pageTitle } = Astro.props
+const { pageTitle, title } = Astro.props
 ---
 <html lang='ko'>
   <head>
@@ -11,12 +9,27 @@ const { pageTitle } = Astro.props
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <meta name='viewport' content='width=device-width' />
     <meta name='generator' content={Astro.generator} />
-    <title>{pageTitle}</title>
+    <title>{title}</title>
   </head>
   <body>
-    <Header />
-    <h1>{pageTitle}</h1>
-    <slot />
+    <main>
+      {pageTitle && <h1>{pageTitle}</h1>}
+      <slot />
+    </main>
     <Footer />
   </body>
 </html>
+
+<style lang='scss'>
+  body {
+    color: #131313;
+  }
+  h1 {
+    font-size: rem(48px);
+    font-weight: 700;
+  }
+  main {
+    /* for footer */
+    min-height: calc(100vh - (144px + 48px));
+  }
+</style>

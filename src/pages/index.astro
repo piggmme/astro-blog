@@ -1,11 +1,87 @@
 ---
-import '@/styles/global.css'
+import Card from '@/components/Card.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import Greeting from '@/components/Greeting'
+import { camelize } from '@/utils/string'
 
-const pageTitle = 'HOME'
+interface Post {
+  frontmatter: {
+    title: string
+    tags: string[]
+    bgcolor: string
+    color: string
+  }
+  url?: string
+}
+const allPosts: Post[] = await Astro.glob('./posts/*.md')
+const uniqueTags = [...new Set(allPosts.map(post => post.frontmatter.tags).flat())]
+const tags = uniqueTags.map((tag) => {
+  const filteredPosts = allPosts.filter(post => post.frontmatter.tags.includes(tag)) as Post[]
+  return {
+    tag,
+    posts: filteredPosts,
+  }
+})
 ---
-<BaseLayout pageTitle={pageTitle}>
-  <h2>My awesome blog subtitle</h2>
-  <Greeting client:load messages={['Hej', 'Hallo', 'Hola', 'Habari']} />
+<BaseLayout title='@dev.hee'>
+  <section class='home-header'>
+    <h1>@dev_hee</h1>
+    <p>그림쟁이 개발자 데브희입니다. <br />저의 보조기억 장치에 오신 것을 환영합니다.</p>
+  </section>
+
+  {
+    tags.map(({ tag, posts }) => (
+      <section class='home-posts'>
+        <h2>#{camelize(tag)}</h2>
+        <ul>
+          {posts.map(post => (
+            <li>
+              <Card as='a' href={post.url} style={{ backgroundColor: post.frontmatter.bgcolor, color: post.frontmatter.color }}>
+                <h3>{post.frontmatter.title}</h3>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
 </BaseLayout>
+
+<style lang='scss'>
+  .home-header {
+    margin-bottom: 24px;
+    padding: 36px;
+    h1 {
+      font-size: rem(48px);
+      font-weight: 700;
+    }
+    p {
+      font-size: rem(18px);
+      font-weight: 300;
+      line-height: 1.3;
+    }
+  }
+
+  .home-posts{
+    margin-bottom: 48px;
+
+    h2 {
+      padding-left: 36px;
+      font-size: rem(24px);
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: rem(16px);
+      font-weight: 600;
+    }
+
+    ul {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+      overflow-x: scroll;
+      padding: 16px;
+      padding-left: 36px;
+    }
+  }
+</style>
