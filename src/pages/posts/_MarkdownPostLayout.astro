@@ -1,4 +1,5 @@
 ---
+import HeadingTag from '@/components/HeadingTag.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import type { MarkdownLayoutProps } from 'astro'
 
@@ -16,34 +17,119 @@ type Props = MarkdownLayoutProps<{
 const { frontmatter, headings } = Astro.props
 ---
 
-<BaseLayout pageTitle={frontmatter.title}>
-  <p>{frontmatter.pubDate.toString().slice(0, 10)}</p>
-  <p><em>{frontmatter.description}</em></p>
-  <p>Written by: {frontmatter.author}</p>
-  <img src={frontmatter.image.url} width='300' alt={frontmatter.image.alt} />
+<BaseLayout title={frontmatter.title}>
+  <section class='header'>
+    <h1>{frontmatter.title}</h1>
+    <!-- <p>{frontmatter.pubDate.toString().slice(0, 10)}</p> -->
+    <img src={frontmatter.image.url} alt={frontmatter.image.alt} />
+  </section>
 
-  {headings.length !== 0 && (
-    <ul>
-      {headings.map(head => (
-        <li>
-          <a href={`#${head.slug}`}>
-            {Array.from({ length: head.depth }, () => '#').join('')}
-            {head.text}
-          </a>
-        </li>
-      ))}
-    </ul>
-  )}
-  <slot />
+  <div class='main'>
+    <section class='markdown'>
+      <slot />
+    </section>
+    <nav>
+      {headings.length !== 0 && (
+        <ul class='list'>
+          {headings.map(head => (
+            <li>
+              <a href={`#${head.slug}`}>
+                <HeadingTag level={head.depth}>
+                  {Array.from({ length: head.depth - 1 }, (_, idx) => idx === 0 ? '' : 'ㅤ').join('')}
+                  {head.text}
+                </HeadingTag>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </nav>
+  </div>
 </BaseLayout>
+
 <style lang='scss'>
-  ul {
-    margin: 16px;
-    padding: 16px;
-    background-color: #f4f4f4;
+  .header {
+    display: block;
+    margin-left: 48px;
+    margin-top: 48px;
+    max-width: 1000px;
+
+    h1 {
+      font-size: rem(64px);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    img {
+      max-width: 500px;
+      margin: 0 auto;
+    }
   }
-  a {
-    color: blue;
-    text-decoration: underline;
+
+  .main {
+    display: flex;
+    padding: 0 48px;
+    box-sizing: border-box;
+    gap: 24px;
+    max-width: 1000px;
+    .markdown {
+      width: 100%;
+    }
+
+    nav {
+      position: fixed;
+      top: 200px;
+      right: 32px;
+    }
+  }
+
+  .list {
+    border-radius: 16px;
+    border: 1px solid #eaeaea;
+    background-color: rgba(255, 255, 255, 0.8);
+    max-width: 300px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  li, a, h1, h2, h3, h4, h5, h6 {
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: rem(18px);
+  }
+  h2 {
+    font-size: rem(16px);
+  }
+  h3, h4 {
+    font-size: rem(14px);
+  }
+  h5, h6 {
+    font-size: rem(12px);
+  }
+  h1 {
+    font-weight: 700;
+    font-size: rem(16px);
+  }
+  h2 {
+    font-weight: 600;
+  }
+  h3 {
+    font-weight: 400;
+  }
+  h4, h5, h6 {
+    color: #474747;
+
+  }
+</style>
+
+<style is:global>
+  .markdown {
+    img {
+      max-width: 100%;
+      height: auto;
+    }
   }
 </style>

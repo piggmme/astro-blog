@@ -1,0 +1,17 @@
+---
+interface Props {
+  level: number
+}
+const level = Astro.props.level || 1
+const Head = Astro.props.level ? `h${level}` : 'h1'
+
+---
+<Head {...Astro.props}>
+  <slot />
+</Head>
+
+<style lang='scss'>
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+</style>

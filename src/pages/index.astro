@@ -7,15 +7,25 @@ interface Post {
   frontmatter: {
     title: string
     tags: string[]
+    pubDate: string
+    image: {
+      url: string
+      alt?: string
+    }
     bgcolor: string
     color: string
   }
   url?: string
 }
-const allPosts: Post[] = await Astro.glob('./posts/*.md')
+const allPosts: Post[] = await Astro.glob('./posts/*/*.md')
 const uniqueTags = [...new Set(allPosts.map(post => post.frontmatter.tags).flat())]
 const tags = uniqueTags.map((tag) => {
   const filteredPosts = allPosts.filter(post => post.frontmatter.tags.includes(tag)) as Post[]
+  filteredPosts.sort((a, b) => {
+    const aDate = new Date(a.frontmatter.pubDate)
+    const bDate = new Date(b.frontmatter.pubDate)
+    return bDate.getTime() - aDate.getTime()
+  })
   return {
     tag,
     posts: filteredPosts,
@@ -35,8 +45,19 @@ const tags = uniqueTags.map((tag) => {
         <ul>
           {posts.map(post => (
             <li>
-              <Card as='a' href={post.url} style={{ backgroundColor: post.frontmatter.bgcolor, color: post.frontmatter.color }}>
-                <h3>{post.frontmatter.title}</h3>
+              <Card
+                as='a'
+                href={post.url}
+                class='card'
+                style={{ background: `url("${post.frontmatter.image.url}") #fff`, backgroundSize: 'cover' }}
+              >
+                <div class='subtitle'>
+                  <h3 class='title'>
+                    <span class='highlight'>
+                      {post.frontmatter.title}
+                    </span>
+                  </h3>
+                </div>
               </Card>
             </li>
           ))}
@@ -63,16 +84,12 @@ const tags = uniqueTags.map((tag) => {
 
   .home-posts{
     margin-bottom: 48px;
+    box-sizing: border-box;
 
     h2 {
       padding-left: 36px;
       font-size: rem(24px);
       font-weight: 700;
-    }
-
-    h3 {
-      font-size: rem(16px);
-      font-weight: 600;
     }
 
     ul {
@@ -82,6 +99,30 @@ const tags = uniqueTags.map((tag) => {
       overflow-x: scroll;
       padding: 16px;
       padding-left: 36px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      position: relative;
+    }
+    .title {
+      font-size: rem(20px);
+      color: white;
+      font-size: rem(18px);
+      font-weight: 600;
+      text-align: center;
+      bottom: 16px;
+    }
+    .highlight {
+      background-color: black;
+      font-size: inherit;
+    }
+    .subtitle{
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      width: 100%;
+      transform: translateX(-50%);
     }
   }
 </style>

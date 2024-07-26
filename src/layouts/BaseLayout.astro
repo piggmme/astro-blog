@@ -1,7 +1,7 @@
 ---
 import Footer from '@/components/Footer/Footer.astro'
 
-const { pageTitle, title } = Astro.props
+const { title } = Astro.props
 ---
 <html lang='ko'>
   <head>
@@ -13,7 +13,6 @@ const { pageTitle, title } = Astro.props
   </head>
   <body>
     <main>
-      {pageTitle && <h1>{pageTitle}</h1>}
       <slot />
     </main>
     <Footer />
