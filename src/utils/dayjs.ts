@@ -8,5 +8,5 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 export const dayFormat = (appointmentTime: string) => {
-  return dayjs(appointmentTime).format('M월 DD일 (dd) A h:mm')
+  return dayjs(appointmentTime).format('YYYY년 M월 D일 (dd)')
 }

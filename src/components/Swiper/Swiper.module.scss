@@ -1,0 +1,44 @@
+.Container {
+  width: 100%;
+}
+
+.Swiper {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;
+  overflow: scroll;
+  width: 100%;
+  scroll-snap-type: mandatory;
+  scroll-snap-points-x: repeat(100%);
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none; /* 파이어폭스 */
+}
+.Swiper::-webkit-scrollbar {
+  display: none;
+}
+
+.Item:first-of-type {
+  margin-left: 30px;
+}
+.Item:last-of-type {
+  margin-right: 30px;
+}
+
+.Controls {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding-right: 30px;
+
+  button {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+}

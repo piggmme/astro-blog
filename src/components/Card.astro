@@ -1,7 +1,18 @@
 ---
-const As = Astro.props.as || 'div'
+interface Props {
+  class?: string
+  as?: string
+  title?: string
+  subtitle?: string
+}
+
+const { title, subtitle, as } = Astro.props as Props
+const As = as || 'div'
+
 ---
 <As {...Astro.props} class:list={['card', Astro.props.class]}>
+  <h3>{title}</h3>
+  <span>{subtitle}</span>
   <slot />
 </As>
 
@@ -10,10 +21,12 @@ const As = Astro.props.as || 'div'
     display: block;
     border: 1px solid #f7f7f7;
     height: 240px;
-    width: 300px;
+    width: 200px;
     border-radius: 16px;
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 3px 5px;
+    // box-shadow: rgba(17, 12, 46, 0.095) 0px 48px 100px 0px;
     box-sizing: border-box;
     overflow: hidden;
+    padding: 16px;
+    background-color: $bg-grey;
   }
 </style>

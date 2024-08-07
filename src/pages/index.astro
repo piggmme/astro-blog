@@ -2,6 +2,9 @@
 import Card from '@/components/Card.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { camelize } from '@/utils/string'
+import '@/utils/dayjs'
+import Swiper from '@/components/Swiper/Swiper'
+import { dayFormat } from '@/utils/dayjs'
 
 interface Post {
   frontmatter: {
@@ -42,26 +45,18 @@ const tags = uniqueTags.map((tag) => {
     tags.map(({ tag, posts }) => (
       <section class='home-posts'>
         <h2>#{camelize(tag)}</h2>
-        <ul>
+        <Swiper client:only='react' transition:persist>
           {posts.map(post => (
-            <li>
-              <Card
-                as='a'
-                href={post.url}
-                class='card'
-                style={{ background: `url("${post.frontmatter.image.url}") #fff`, backgroundSize: 'cover' }}
-              >
-                <div class='subtitle'>
-                  <h3 class='title'>
-                    <span class='highlight'>
-                      {post.frontmatter.title}
-                    </span>
-                  </h3>
-                </div>
+            <Swiper.Item>
+              <Card as='a' href={post.url} class='card'>
+                <h3 class='title'>
+                  {post.frontmatter.title}
+                </h3>
+                <span class='subtitle'>{dayFormat(post.frontmatter.pubDate)}</span>
               </Card>
-            </li>
+            </Swiper.Item>
           ))}
-        </ul>
+        </Swiper>
       </section>
     ))
   }
@@ -90,6 +85,7 @@ const tags = uniqueTags.map((tag) => {
       padding-left: 36px;
       font-size: rem(24px);
       font-weight: 700;
+      margin-bottom: 16px;
     }
 
     ul {
@@ -104,25 +100,16 @@ const tags = uniqueTags.map((tag) => {
 
     .card {
       position: relative;
+      padding: 16px;
     }
     .title {
       font-size: rem(20px);
-      color: white;
-      font-size: rem(18px);
-      font-weight: 600;
-      text-align: center;
-      bottom: 16px;
+      font-weight: 700;
+      word-break: keep-all;
     }
-    .highlight {
-      background-color: black;
-      font-size: inherit;
-    }
-    .subtitle{
-      position: absolute;
-      bottom: 16px;
-      left: 50%;
-      width: 100%;
-      transform: translateX(-50%);
+    .subtitle {
+      color: $grey-400;
+      font-size: rem(12px);
     }
   }
 </style>
