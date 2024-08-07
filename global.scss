@@ -38,62 +38,81 @@ img,video{max-width:100%;height:auto}
 [hidden]{display:none}
 
 // font
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Thin.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Thin.woff')
+    format('woff');
   font-weight: 100;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraLight.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraLight.woff')
+    format('woff');
   font-weight: 200;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Light.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraLight.woff')
+    format('woff');
   font-weight: 300;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff')
+    format('woff');
   font-weight: 400;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff')
+    format('woff');
   font-weight: 500;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff')
+    format('woff');
   font-weight: 600;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff')
+    format('woff');
   font-weight: 700;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraBold.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraBold.woff')
+    format('woff');
   font-weight: 800;
   font-style: normal;
 }
+
 @font-face {
-  font-family: 'SUIT';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Heavy.woff2') format('woff2');
+  font-family: 'Pretendard';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Black.woff')
+    format('woff');
   font-weight: 900;
   font-style: normal;
 }
+
 * {
-  font-family: 'SUIT', sans-serif;
+  font-family: 'Pretendard', san-serif;
 }
 
 // utils
@@ -104,3 +123,20 @@ $html-font-size: 16px;
 @function rem($pxValue) {
   @return #{math.div(stripUnit($pxValue), stripUnit($html-font-size))}rem;
 }
+
+// color
+$grey-50: #f9fafb;
+$grey-100: #f2f4f6;
+$grey-200: #e5e8eb;
+$grey-300: #d1d6db;
+$grey-400: #b0b8c1;
+$grey-500: #8b95a1;
+$grey-600: #6b7684;
+$grey-700: #4e5968;
+$grey-800: #333d4b;
+$grey-900: #191f28;
+
+$bg-gray: $grey-100;
+$bg-black: $grey-900;
+$font-black: $grey-900;
+$font-gray: $grey-600;
