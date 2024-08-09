@@ -1,5 +1,6 @@
 .Container {
   width: 100%;
+  position: relative;
 }
 
 .Swiper {
@@ -25,12 +26,16 @@
 }
 
 .Controls {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding-right: 30px;
+  padding: 0 12px;
+  font-size: 30px;
 
   button {
     border-radius: 50%;
@@ -41,4 +46,13 @@
     align-items: center;
     cursor: pointer;
   }
+}
+
+.Icon {
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+  background-color: rgb(255 255 255 / 50%);
+  backdrop-filter: blur(10px);
+  border-radius: 100%;
 }

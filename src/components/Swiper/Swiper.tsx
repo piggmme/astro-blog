@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import styles from './Swiper.module.scss'
-
+import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
 const ITEM_WIDTH = 200
 const GAP = 16
 
@@ -69,8 +69,12 @@ function SwiperControls ({
 }) {
   return (
     <div className={styles.Controls}>
-      <button disabled={prevDisabled} onClick={prev}>Prev</button>
-      <button disabled={nextDisabled} onClick={next}>Next</button>
+      <button disabled={prevDisabled} onClick={prev}>
+        <ChevronLeftIcon className={styles.Icon} />
+      </button>
+      <button disabled={nextDisabled} onClick={next}>
+        <ChevronRightIcon className={styles.Icon} />
+      </button>
     </div>
   )
 }
