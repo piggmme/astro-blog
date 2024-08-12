@@ -217,6 +217,10 @@ class AttachmentsBoxForm {
 
 클래스 컴포넌트를 함수 컴포넌트로 마이그레이션 하는 작업중에 다음과 같은 에러가 발생하였다. 함수 컴포넌트에서는 `string ref` 를 사용할 수 없어서 아래와 같은 에러가 발생하였던 것이라 `forwardRef` 로 변경해 해결할 수 있었다.
 
+```
+Error: Function components cannot have string refs. We recommend using useRef() instead. Learn more about using refs safely here:
+```
+
 ![](https://private-user-images.githubusercontent.com/76723666/356958132-869b004e-0952-4863-bea0-1229146a541d.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjM0NDYyMzgsIm5iZiI6MTcyMzQ0NTkzOCwicGF0aCI6Ii83NjcyMzY2Ni8zNTY5NTgxMzItODY5YjAwNGUtMDk1Mi00ODYzLWJlYTAtMTIyOTE0NmE1NDFkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA4MTIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwODEyVDA2NTg1OFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWI3OWQ2NDQyYjllYTAzNWM2ZjIxN2I1YzdmYzQ1MDhiMDEwM2Y3YmFkNWY5Mjk4NDJhYjIyMTMxZDlhYjRkODcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.aSNq_nhF2a8rSpguo4sEwfNcObiQp_c3NoKOW-0lZJo)
 
 ### [Legacy Context](https://legacy.reactjs.org/docs/legacy-context.html)
