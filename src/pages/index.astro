@@ -33,6 +33,20 @@ const tags = uniqueTags.map((tag) => {
     tag,
     posts: filteredPosts,
   }
+}).sort((postA, postB) => {
+  const findLatest = (posts: Post[]) => {
+    return posts.reduce((prev, current) => {
+      const prevDate = new Date(prev.frontmatter.pubDate)
+      const currentDate = new Date(current.frontmatter.pubDate)
+      return prevDate.getTime() > currentDate.getTime() ? prev : current
+    })
+  }
+  const latestPostA = findLatest(postA.posts)
+  const latestPostB = findLatest(postB.posts)
+
+  const aDate = new Date(latestPostA.frontmatter.pubDate)
+  const bDate = new Date(latestPostB.frontmatter.pubDate)
+  return bDate.getTime() - aDate.getTime()
 })
 ---
 <BaseLayout title='@dev.hee'>
