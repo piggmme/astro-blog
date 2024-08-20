@@ -111,7 +111,7 @@ Docker는 컨테이너 기술의 핵심이며, 개별 애플리케이션을 컨�
 
 ## 빌드/배포 Flow
 
-![인프라 도식도](../../../assets/web_setting-infra_01.png)
+![인프라 도식도](/images/web_setting-infra_01.png)
 
 ### 1. 자동 빌드 (with Docker Hub)
 
