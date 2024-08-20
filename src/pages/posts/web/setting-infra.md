@@ -1,7 +1,7 @@
 ---
 title: '사내 Docker hub와 k8s 기반 오케스트레이션 도구를 사용한 배포 환경 설정기'
 layout: ../_MarkdownPostLayout.astro
-pubDate: 2022-12-13
+pubDate: 2024-8-20
 description: '사내 Docker hub와 k8s 기반 오케스트레이션 도구를 사용한 배포 환경 설정기'
 author: 'dev_hee'
 image:
