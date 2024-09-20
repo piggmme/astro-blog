@@ -72,7 +72,43 @@ CORS 문제를 해결하기 위해서는 서버와 클라이언트 측에서 각
 Access-Control-Allow-Origin: *
 ```
 
-하지만 보안상 모든 도메인을 허용하는 것은 권장되지 않으며, 특정 도메인만 허용하는 것이 좋다:
+단, 이렇게 모든 도메인에서 요청을 허용하게 된다면, **클라이언트에서 요청을 보낼 때 자격 증명(`credentials`) 관련 옵션을 제거해주어야 한다.** `fetch`, `axios` 둘 다 자격 증명에 관한 옵션들은 기본값이 off 이지만, 명시적으로 제거해준다면 다음과 같다.
+
+#### fetch
+
+```js
+// fetch의 credentials 기본값은 'same-origin'으로, 같은 origin에선 credentials을 포함하지만 다른 origin에 대해선 credentials이 포함되지 않도록 설정되어 있음.
+fetch('https://api.example.com/data', {
+  method: 'GET',
+  credentials: 'same-origin' // 또는 'omit'
+})
+```
+
+#### axios
+
+```js
+// axios의 withCredentials 기본값은 false로, credentials이 포함되지 않도록 설정되어 있음.
+axios.get('https://api.example.com/data', {
+  withCredentials: false // 기본 값임
+})
+```
+
+그렇다면 자격 증명(`credentials`)이란 무엇일까? 자격 증명은 쿠키, 인증 정보, 세션 정보등을 말하며 클라이언트에서 서버로 요청을 보낼 때 해당 정보들을 함께 전송할지를 결정하는 속성이다. 예를 들어, API 요청 시 사용자 로그인 정보를 포함하거나, 세션 기반 인증을 사용해야할 때 이 옵션이 필요하다.
+
+아래와 같이 요청을 보낸다면 해당 요청은 쿠키나 세션 정보를 포함하게 된다. 단, 서버 응답 헤더에 `Access-Control-Allow-Origin: *` 로 설정된 경우엔 자격 증명 정보를 포함하여 요청을 보낼 수 없다([참고로 브라우저가 중간에서 `Preflight Request` 메커니즘을 통해 요청 전송이 가능한지 확인한다.](https://developer.mozilla.org/ko/docs/Glossary/Preflight_request)):
+
+```js
+fetch('https://api.example.com/data', {
+  method: 'GET',
+  credentials: 'include', // 자격 증명 포함하여 요청 전송
+});
+
+axios.get('https://api.example.com/data', {
+  withCredentials: true  // 자격 증명 포함하여 요청 전송
+})
+```
+
+인증이 필요한 요청을 하는 경우엔 모든 도메인이 허용되는 경우는 제한되며, 보안상으로도 모든 도메인을 허용하는 것은 권장되지 않기 때문에 다음과 같이 특정 도메인만 허용하는 것이 좋다:
 
 ```http
 Access-Control-Allow-Origin: https://frontend.example.com
