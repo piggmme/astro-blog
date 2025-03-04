@@ -145,5 +145,67 @@ const { frontmatter, headings } = Astro.props
       max-width: 100%;
       height: auto;
     }
+
+    /* Markdown 스타일 */
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+
+    h1 {
+      font-size: 2rem;
+      color: #2a2a2a;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.3rem;
+    }
+
+    blockquote {
+      border-left: 4px solid #ddd;
+      margin: 1rem 0;
+      padding: 0.5rem 1rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+    }
+
+    th {
+      background-color: #f8f8f8;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+    }
+
+    ul, ol {
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+
+    p {
+      margin: 1rem 0;
+    }
+
+    pre {
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto; /* 긴 코드 스크롤 가능 */
+      font-family: 'Courier New', monospace;
+    }
+
+    pre code {
+      font-size: 1rem;
+    }
+
+    /* ✅ 2. 인라인 코드 스타일 (`<code>...</code>` 형태) */
+    code {
+      color: #d63384; /* 붉은색 강조 */
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
   }
 </style>
