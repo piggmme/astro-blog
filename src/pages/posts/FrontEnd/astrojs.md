@@ -1,8 +1,8 @@
 ---
 title: 'Astro 프레임워크에 대한 고찰'
 layout: ../_MarkdownPostLayout.astro
-pubDate: 2025-3-4
-description: 'Astro js에 대한 고찰'
+pubDate: 2025-3-13
+description: 'Astro 프레임워크에 대한 고찰'
 author: 'dev_hee'
 image:
     url: ''
@@ -80,6 +80,20 @@ Astro 공식 홈페이지에는 다음과 같이 프레임워크에대해서 설
 | **HTML 렌더링** | 서버         | 클라이언트     |
 | **하이드레이션** | 클라이언트   | 클라이언트     |
 
+<!-- 검증 필요 -->
+하지만 아래처럼 클라이언트 컴포넌트 자식으로 넘겨준 아스트로 아일랜드는 서버에서 먼저 렌더링해서 내려주긴 한다.
+
+```jsx
+---
+import MyAstroIsand from './my-astro-isand.astro'
+const data = fetchUserInfo()
+---
+<MyReactComponent client:only="react">
+  {data.name}
+  <MyAstroIsand />
+</MyReactComponent>
+```
+
 
 그리고 클라이언트 아일랜드는 **페이지 하단의 아일랜드가 먼저 로드 되더라도 페이지 상단의 아일랜드가 아직 로드중이라면 렌더링이 블락**된다. 만약 서버측 로직이 오래걸리는 컴포넌트들이 많고 이 때문에 렌더링 블라킹이 발생하지 않길 원한다면 서버 아일랜드를 사용하는 것이 좋다.
 
@@ -115,15 +129,61 @@ Astro 공식 홈페이지에는 다음과 같이 프레임워크에대해서 설
 
 아스트로 컴포넌트에 `server:defer` 지시어를 추가하면 서버 아일랜드로 전환할 수 있다. 이 지시어를 사용하기 위해서는 반드시 아스트로 전용 서버가 필요하다. 따라서 서버 어댑터를 추가하고 `astro.config.js`에서 `output: 'server'` 로 수정해야한다.
 
+다음과 같이 서버 아일랜드를 작성하면
 
+```html
+<ServerIsland server:defer />
+```
 
----
+아래처럼 document에 `inline script` 가 추가된 모습을 확인할 수 있다.
+이 스크립트는 서버 아이랜드를 비동기적으로 `fetch` 하여 서버 아일랜드를 받으면 DOM에 추가한다.
 
- 아직 작성중 (25.3.4)
+<img alt="CORS 에러 예시" src="/images/astrojs_server-island.png" />
+
+서버 아일랜드는 서버에서 렌더링해서 비동기로 전달받기 때문에 개발자 도구에서 JavaScript를 비활성화 하면 클라이언트에서 서버 아일랜드가 렌더링되지 않는다.
 
 ### 2. UI 독립적
 
 > React, Preact, Svelte, Vue, Solid, HTMX, 웹 컴포넌트 등 지원
+
+아스트로는 특정 UI 프레임워크에 종속되어 있지않다. 즉 개발자가 원하는 UI 프레임워크를 자유롭게 선택해서 아스트로 아일랜드를 만들 수 있다. NextJS 와 아스트로의 큰 차이점이 여기에 존재한다. NextJS는 리액트를 기반으로 만들어진 SSR 프레임워크이기 때문이다.
+
+```jsx
+---
+import MyReactComponent from '../components/MyReactComponent.jsx';
+import MySvelteComponent from '../components/MySvelteComponent.svelte';
+import MyVueComponent from '../components/MyVueComponent.vue';
+---
+<div>
+  <MySvelteComponent />
+  <MyReactComponent />
+  <MyVueComponent />
+</div>
+```
+
+단, 아스트로 아일랜드 안에서 UI 프레임워크 컴포넌트를 가져오는 것은 가능하지만, UI 프레임워크 컴포넌트 내부에서 아일랜드를 가져오는 것은 불가능하다. 어떻게 보면 당연한게, 리액트나 뷰에서 아스트로 아일랜드를 지원하지 않을 것이기 때문이다.
+
+```jsx
+import MyAstroIsland from './astro-island.astro'
+
+export default function MyReactComponent () {
+  return (
+    <div>
+      {/* 지원 안함! */}
+      <MyAstroIsland />
+    </div>
+  )
+}
+
+```
+
+하지만 아래처럼 리액트 컴포넌트에게 자식으로 아스트로 컴포넌트를 넘겨주는것은 가능하다.
+
+```jsx
+<MyReactButton>
+  <MyAstroTitle />
+</MyReactButton>
+```
 
 ### 3. 서버 우선
 
