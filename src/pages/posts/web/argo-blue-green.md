@@ -291,8 +291,6 @@ spec:
 
 ## 배포 성공/실패시 알림 보내기
 
-# ArgoCD Hook Job 설명
-
 ArgoCD의 Hook을 사용한 배포 성공/실패 알림 Job을 정의할 수있다.
 
 - 참고: https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#using-a-hook-to-send-a-slack-message
