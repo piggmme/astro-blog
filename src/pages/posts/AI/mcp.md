@@ -320,4 +320,4 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 
 11. Claude 데스크탑을 재실행하면 MCP가 연결된 것을 확인할 수 있다. 
 
-<img src="/images/mcp_claude_example" alt="mcp 예시" />
+<img src="/images/mcp_claude_example.png" alt="mcp 예시" />
