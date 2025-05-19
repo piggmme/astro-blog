@@ -1,7 +1,7 @@
 ---
 title: 'MCP 서버를 만들어보자. (with Typescript SDK)'
 layout: ../_MarkdownPostLayout.astro
-pubDate: 2024-7-30
+pubDate: 2025-5-19
 description: 'Typescript SDK를 기반으로 MCP 서버를 만드는 예제'
 author: 'dev_hee'
 image:
