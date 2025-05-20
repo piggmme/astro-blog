@@ -156,13 +156,57 @@ Claude Desktop에서 `"최근 노트 파일 내용 요약해줘"`라고 요청�
 4. 필요하다면 Claude가 summarizeText(text: string) 도구를 같은 서버나 다른 MCP Server B에 호출하여 요약 진행
 
 
-### MCP의 구성요소
+### MCP Core
 
-MCP(Model Context Protocol)는 "LLM에게 문맥(context)과 기능(functionality)을 안전하고 구조화된 방식으로 제공하는 통신 프로토콜"로, 다음과 같은 구성 요소로 이루어져야한다.
+MCP(Model Context Protocol)는 "LLM에게 문맥(context)과 기능(functionality)을 안전하고 구조화된 방식으로 제공하는 통신 프로토콜"로, 다음과 같은 기능들을 제공한다.
+
+- `Tools`: 실행 및 사이드 이팩트 유발 작업 (REST의 POST 유사) - 예: 계산, API 호출
+```ts
+server.tool(
+  "fetch-weather",
+  { city: z.string() },
+  async ({ city }) => {
+    const response = await fetch(`https://api.weather.com/${city}`);
+    const data = await response.text();
+    return {
+      content: [{ type: "text", text: data }]
+    };
+  }
+);
+```
 
 - `Resources`: 정적인 정보 제공 (REST의 GET 유사) - 예: 파일, 프로필, DB 스키마
-- `Tools`: 실행 및 부작용 유발 작업 (REST의 POST 유사) - 예: 계산, API 호출
-- `Prompts`: 사용자 정의 프롬프트 템플릿 - LLM에게 작업 문맥을 주는 고급 구성요소
+```ts
+server.resource(
+  "user-profile",
+  new ResourceTemplate("users://{userId}/profile", { list: undefined }),
+  async (uri, { userId }) => ({
+    contents: [{
+      uri: uri.href,
+      text: `Profile data for user ${userId}`
+    }]
+  })
+);
+```
+
+- `Prompts`: 사용자 정의 프롬프트 템플릿 - LLM이 MCP 서버와 효과적으로 상호작용 할 수 있도록 도움
+
+```ts
+server.prompt(
+  "review-code",
+  { code: z.string() },
+  ({ code }) => ({
+    messages: [{
+      role: "user",
+      content: {
+        type: "text",
+        text: `Please review this code:\n\n${code}`
+      }
+    }]
+  })
+);
+```
+
 
 ### MCP의 장점
 
