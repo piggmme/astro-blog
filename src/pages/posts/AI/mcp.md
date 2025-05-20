@@ -311,7 +311,7 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
         "my-mcp-server": {
             "command": "node",
             "args": [
-                "/ABSOLUTE/PATH/TO/PARENT/FOLDER/weather/build/index.js"
+                "/ABSOLUTE/PATH/TO/PARENT/FOLDER/my-mcp-server/dist/index.js"
             ]
         }
     }
