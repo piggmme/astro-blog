@@ -318,6 +318,46 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 }
 ```
 
-11. Claude 데스크탑을 재실행하면 MCP가 연결된 것을 확인할 수 있다. 
+11. Claude 데스크탑을 재실행하면 MCP가 연결된 것을 확인할 수 있다.
+
+- MCP 서버가 연결됨
+
+<img src="/images/mcp_connected.png" alt="mcp 연결" />
+
+- Claude Desktop이 MCP server에 접근하기 전에 확인 모달이 뜸
+
+<img src="/images/mcp_connected2.png" alt="mcp 연결" />
+
+- MCP server tool로 전달 받은 데이터를 활용해 응답을 생성
 
 <img src="/images/mcp_claude_example.png" alt="mcp 예시" />
+
+### 트러블 슈팅
+
+<img src="/images/mcp_error.png" alt="mcp 오류" />
+
+MCP 서버가 계속해서 연결에 실패했다. 로그 폴더를 열어서 로그를 확인해보니 아래와 같이 Node.js의 ES 모듈 구문 관련 문제가 발생함을 확인할 수 있었다.
+
+```text
+import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+       ^
+
+SyntaxError: Unexpected token {
+    at Module._compile (internal/modules/cjs/loader.js:723:23)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:789:10)
+    at Module.load (internal/modules/cjs/loader.js:653:32)
+    at tryModuleLoad (internal/modules/cjs/loader.js:593:12)
+    at Function.Module._load (internal/modules/cjs/loader.js:585:3)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:831:12)
+    at startup (internal/bootstrap/node.js:283:19)
+    at bootstrapNodeJSCore (internal/bootstrap/node.js:623:3)
+```
+
+[typescript-sdk issue: base mcp example weather doesn't work in my local machine](https://github.com/modelcontextprotocol/typescript-sdk/issues/375) 이슈를 참고하니  Claude Desktop이 최신 버전의 node가 아니라 로컬에 설치된 예전 노드 버전중 하나를 사용하여 발생한 문제였다.
+
+필자는 `nvm`을 사용하고 있어서 16 이하 버전의 node를 삭제 처리하니 정상적으로 동작함을 확인할 수 있었다.
+
+```zsh
+nvm uninstall 10.24.1 && nvm uninstall 12.22.12 && nvm uninstall 15.14.0 && nvm uninstall 16.15.1 && nvm uninstall 16.18.1
+```
+
