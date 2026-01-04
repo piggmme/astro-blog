@@ -84,6 +84,7 @@ const { frontmatter, headings } = Astro.props
 
     .markdown {
       flex: 8;
+      min-width: 0;
       box-sizing: border-box;
       padding-right: 30px;
     }
@@ -245,6 +246,8 @@ const { frontmatter, headings } = Astro.props
       border-radius: 6px;
       overflow-x: auto; /* 긴 코드 스크롤 가능 */
       font-family: 'Courier New', monospace;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     pre code {
