@@ -6,10 +6,10 @@ import dayjs from 'dayjs'
 
 type Props = MarkdownLayoutProps<{
   title: string
-  author: string
-  description: string
-  pubDate: string
-  image: {
+  author?: string
+  description?: string
+  pubDate?: string
+  image?: {
     url: string
     alt: string
   }
@@ -21,8 +21,8 @@ const { frontmatter, headings } = Astro.props
 <BaseLayout title={frontmatter.title}>
   <section class='header'>
     <h1 class='title'>{frontmatter.title}</h1>
-    <p>{dayjs(frontmatter.pubDate).format('YYYY.MM.DD')}</p>
-    <img src={frontmatter.image.url} alt={frontmatter.image.alt} />
+    {frontmatter.pubDate && <p>{dayjs(frontmatter.pubDate).format('YYYY.MM.DD')}</p>}
+    {frontmatter.image && <img src={frontmatter.image.url} alt={frontmatter.image.alt} />}
   </section>
 
   <div class='main'>
@@ -51,7 +51,6 @@ const { frontmatter, headings } = Astro.props
 <style lang='scss'>
   .header {
     display: block;
-    padding-left: 24px;
     padding-top: 48px;
     padding-bottom: 60px;
     width: 100%;
@@ -80,24 +79,64 @@ const { frontmatter, headings } = Astro.props
     justify-content: start;
     align-items: start;
     height: auto;
-    padding-left: 24px;
     width: 100%;
     box-sizing: border-box;
 
     .markdown {
+      flex: 8;
       box-sizing: border-box;
       padding-right: 30px;
-      max-width: calc(100% - 250px);
     }
 
     nav {
+      flex: 0 0 auto;
+      max-width: 250px;
+      min-width: 200px;
       position: sticky;
       top: 16px;
       right: 0px;
+      box-sizing: border-box;
+
+      .list li,
+      .list a,
+      .list h1,
+      .list h2,
+      .list h3,
+      .list h4,
+      .list h5,
+      .list h6 {
+        white-space: normal;
+        text-overflow: clip;
+        overflow: visible;
+        word-break: break-word;
+      }
+
+      .list h1,
+      .list h2 {
+        font-size: rem(14px);
+      }
+      .list h3,
+      .list h4 {
+        font-size: rem(12px);
+      }
+      .list h5,
+      .list h6 {
+        font-size: rem(10px);
+      }
+      .list h1 {
+        font-weight: 700;
+        font-size: rem(16px);
+      }
+      .list h2 {
+        font-weight: 600;
+      }
+      .list h3 {
+        font-weight: 400;
+      }
     }
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1000px) {
     .main {
       nav {
         display: none;
@@ -105,36 +144,49 @@ const { frontmatter, headings } = Astro.props
 
       .markdown {
         max-width: 100%;
+        padding-right: 0;
       }
     }
   }
 
-  li, a, h1, h2, h3, h4, h5, h6 {
+  .markdown li,
+  .markdown a,
+  .markdown h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4,
+  .markdown h5,
+  .markdown h6 {
     box-sizing: border-box;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
   }
-  h1, h2 {
+  .markdown h1,
+  .markdown h2 {
     font-size: rem(14px);
   }
-  h3, h4 {
+  .markdown h3,
+  .markdown h4 {
     font-size: rem(12px);
   }
-  h5, h6 {
+  .markdown h5,
+  .markdown h6 {
     font-size: rem(10px);
   }
-  h1 {
+  .markdown h1 {
     font-weight: 700;
     font-size: rem(16px);
   }
-  h2 {
+  .markdown h2 {
     font-weight: 600;
   }
-  h3 {
+  .markdown h3 {
     font-weight: 400;
   }
-  h4, h5, h6 {
+  .markdown h4,
+  .markdown h5,
+  .markdown h6 {
     color: $grey-400;
   }
 </style>

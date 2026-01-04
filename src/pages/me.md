@@ -1,5 +1,5 @@
 ---
-layout: ./posts/_MeLayout.astro
+layout: ./posts/_MarkdownPostLayout.astro
 title: 'About Me'
 ---
 
