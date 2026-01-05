@@ -1,10 +1,11 @@
 import rss, { pagesGlobToRssItems } from '@astrojs/rss'
+import type { APIContext } from 'astro'
 
-export async function GET (context: { site: string }) {
+export async function GET (context: APIContext) {
   return rss({
-    title: 'Astro Learner | Blog',
-    description: 'My journey learning Astro',
-    site: context.site,
+    title: 'Developer Hee | Blog',
+    description: 'Logging my journey as a developer',
+    site: context.site ?? 'https://blog.dev-hee.com',
     items: await pagesGlobToRssItems(import.meta.glob('./**/*.md')),
     customData: `<language>en-us</language>`,
   })
