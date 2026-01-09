@@ -16,7 +16,7 @@ const title = frontmatter.title || 'About Me'
     <section class='markdown'>
       <slot />
     </section>
-    {headings.length > 0 && (
+    <!-- {headings.length > 0 && (
       <nav>
         <ul class='list'>
           {headings.map(head => (
@@ -31,7 +31,7 @@ const title = frontmatter.title || 'About Me'
           ))}
         </ul>
       </nav>
-    )}
+    )} -->
   </div>
 </BaseLayout>
 
@@ -41,21 +41,8 @@ const title = frontmatter.title || 'About Me'
     justify-content: start;
     align-items: start;
     height: auto;
-    padding: 48px 24px;
     width: 100%;
     box-sizing: border-box;
-
-    .markdown {
-      box-sizing: border-box;
-      padding-right: 30px;
-      max-width: calc(100% - 250px);
-    }
-
-    nav {
-      position: sticky;
-      top: 16px;
-      right: 0px;
-    }
   }
 
   @media screen and (max-width: 768px) {
@@ -108,31 +95,18 @@ const title = frontmatter.title || 'About Me'
     }
 
     /* Markdown 스타일 */
-    font-family: 'Arial', sans-serif;
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, 
+                 system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", 
+                 "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", 
+                 "Segoe UI Symbol", sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #191f28;
 
     h1 {
       font-size: 2rem;
-      color: #2a2a2a;
+      color: #191f28;
       border-bottom: 2px solid #ddd;
       padding-bottom: 0.3rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      color: #2a2a2a;
-      margin-top: 1.5rem;
-      margin-bottom: 0.8rem;
-    }
-
-    h3 {
-      font-size: 1.25rem;
-      color: #2a2a2a;
-      margin-top: 1.2rem;
-      margin-bottom: 0.6rem;
     }
 
     blockquote {
@@ -168,20 +142,27 @@ const title = frontmatter.title || 'About Me'
     pre {
       padding: 1rem;
       border-radius: 6px;
-      overflow-x: auto;
+      overflow-x: auto; /* 긴 코드 스크롤 가능 */
       font-family: 'Courier New', monospace;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     pre code {
       font-size: 1rem;
     }
 
-    code {
-      color: #d63384;
+    /* ✅ 2. 인라인 코드 스타일 (`<code>...</code>` 형태) */
+    :not(pre) code {
+      color: #d63384; /* 붉은색 강조 */
+      font-weight: 700;
       padding: 0.2rem 0.4rem;
       border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
+      background-color: #eaecee;
+    }
+
+    a {
+      color: inherit;
     }
   }
 </style>

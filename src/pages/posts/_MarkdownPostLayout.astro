@@ -200,13 +200,16 @@ const { frontmatter, headings } = Astro.props
     }
 
     /* Markdown 스타일 */
-    font-family: 'Arial', sans-serif;
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, 
+                 system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", 
+                 "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", 
+                 "Segoe UI Symbol", sans-serif;
     line-height: 1.6;
-    color: #333;
+    color: #191f28;
 
     h1 {
       font-size: 2rem;
-      color: #2a2a2a;
+      color: #191f28;
       border-bottom: 2px solid #ddd;
       padding-bottom: 0.3rem;
     }
@@ -255,12 +258,12 @@ const { frontmatter, headings } = Astro.props
     }
 
     /* ✅ 2. 인라인 코드 스타일 (`<code>...</code>` 형태) */
-    code {
+    :not(pre) code {
       color: #d63384; /* 붉은색 강조 */
+      font-weight: 700;
       padding: 0.2rem 0.4rem;
       border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
+      background-color: #eaecee;
     }
   }
 </style>
