@@ -22,12 +22,9 @@ tags: ["React"]
 이 글은 실제 레거시 프로젝트에서
 **Redux 중심 구조를 axios + transformer + Nanostores 구조로 점진적으로 전환한 경험**을 정리한 기록입니다.
 
-핵심은 “Redux가 나쁘다”가 아니라,
-**Redux가 너무 많은 책임을 지고 있던 구조를 어떻게 분해했는가**입니다.
+## 💣 기존 Redux 구조의 전체 그림
 
-## 0. 기존 Redux 구조의 전체 그림
-
-### 0.1 전형적인 Redux + Thunk 구조
+### 전형적인 Redux + Thunk 구조
 
 #### Action (Thunk)
 
@@ -55,7 +52,7 @@ export const fetchMessages = () => async (dispatch) => {
 이 코드만 보면 “나쁘지 않아 보이는” 구조입니다.
 하지만 실제 문제는 **reducer에서 발생**했습니다.
 
-### 0.2 전형적인 Redux Reducer (문제의 핵심)
+### 전형적인 Redux Reducer (문제의 핵심)
 
 ```ts
 // reducers/messages.ts
@@ -110,14 +107,13 @@ export default function messagesReducer(state = initialState, action) {
 }
 ```
 
-## 1. 이 reducer가 실제로 하고 있던 일들
+## 이 reducer가 실제로 하고 있던 일들
 
 이 reducer는 단순히 “상태를 업데이트”하고 있지 않았습니다.
 
-### reducer가 떠안고 있던 책임
+### reducer에서 처리되고있는 것들
 
 1. **API 스펙 의존**
-
    * `content`, `user_id`, `created_at`, `is_deleted` 등 서버 필드 구조를 직접 알고 있음
 2. **데이터 필터링**
 3. **데이터 변환**
@@ -129,9 +125,9 @@ export default function messagesReducer(state = initialState, action) {
 
 즉, reducer 하나가 **너무 많은 맥락과 책임**을 가지고 있었습니다.
 
-## 2. 이 구조가 실제로 만든 문제들
+## 이 구조가 실제로 만든 문제들
 
-### 2.1 디버깅 난이도 폭증
+### 1. 디버깅 난이도 폭증
 
 UI에서 메시지 순서가 이상하면:
 
@@ -140,28 +136,26 @@ UI에서 메시지 순서가 이상하면:
 * 날짜 파싱 문제인지
   한 번에 판단하기 어려웠습니다.
 
-### 2.2 API 스펙 변경에 취약
+### 2. API 스펙 변경에 취약
 
 서버에서 `created_at → createdAt`으로 변경되면
 런타임 에러가 reducer에서 바로 발생했습니다.
 
-### 2.3 테스트가 사실상 불가능
+### 3. 테스트가 사실상 불가능
 
-reducer 테스트 하나에:
+reducer 테스트 하나에
 
-* API payload mocking
-* state 구성
-* 날짜/정렬/비즈니스 규칙 검증
-  이 모두가 필요했습니다.
+- API payload mocking
+- state 구성
+- 날짜/정렬/비즈니스 규칙 검증
 
-👉 **단위 테스트가 아니라 통합 테스트에 가까운 구조**
+이 모두가 필요했습니다.
 
-## 3. 해결 전략: Redux를 버리는 것이 아니라 “분해”하기
+## 🔎 복잡한 Reducer 를 분해하자 
 
-문제의 원인은 Redux가 아니라,
-**Redux가 너무 많은 역할을 맡고 있던 구조**였습니다.
+문제의 원인 **Redux의 Reducer가 너무 많은 역할을 맡고 있던 구조**였습니다.
 
-그래서 저는 다음 원칙을 세웠습니다.
+따라서 이 문제를 해결하기 위해서 다음과 같은 원칙을 세웠습니다.
 
 ### 핵심 설계 원칙
 
@@ -172,10 +166,9 @@ reducer 테스트 하나에:
 
 즉,
 
-> Redux 하나가 하던 일을
-> axios + transformer + store 로 나눈다
+> Redux 하나가 하던 일을 `axios + transformer + store` 로 나누어 처리합니다.
 
-## 4. 새 구조의 전체 아키텍처
+## 새 구조의 전체 아키텍처
 
 ```
 ┌─────────────┐
@@ -195,7 +188,7 @@ reducer 테스트 하나에:
 └─────────────┘
 ```
 
-## 5. API 레이어: axios는 여기서만 사용한다
+### 1. API
 
 ```ts
 // api/client.ts
@@ -217,10 +210,9 @@ export async function fetchMessages() {
   return res.data
 }
 ```
+여기서는 데이터를 절대 가공하지 않습니다.
 
-👉 **여기서는 데이터를 절대 가공하지 않는다**
-
-## 6. Transformer: reducer에서 떼어낸 로직 가공
+### Transformer: reducer에서 떼어낸 로직 가공
 
 ```ts
 // transformer/messages.ts
@@ -257,14 +249,14 @@ export function transformerFetchMessages(
 }
 ```
 
-### Transformer의 특징
+Transformer의 특징은 다음과 같습니다.
 
-* 순수 함수
-* side-effect 없음
-* 테스트 용이
-* API 스펙 변경 시 수정 지점 명확
+- **순수 함수**
+- side effect 없음
+- 테스트 용이
+- API 스펙 변경 시 수정 지점 명확
 
-## 7. Store: Nanostores로 상태를 작게 쪼개기
+### Store: Nanostores로 상태를 작게 쪼개기
 
 ```ts
 // stores/messages.ts
@@ -274,11 +266,13 @@ import type { Message } from '../transformer/messages'
 export const $messages = atom<Message[]>([])
 ```
 
-* 비동기 없음
-* 로직 없음
-* 상태만 관리
+Store는 단순한 구조로 오직 상태 관리만 수행합니다.
 
-## 8. UI 레이어에서 사용
+- 비동기 없음
+- 로직 없음
+- 상태만 관리
+
+### UI: API + Transformer + Store 조합
 
 ```tsx
 import { useEffect } from 'react'
@@ -312,16 +306,12 @@ export function MessageList() {
 }
 ```
 
-UI는:
+UI에서는 `API`, `Transformer`, `Store` 를 직접 조합하여 데이터를 어디서 가져오고, 어디서 가공하고, 어디서 사용하는지 한 눈에 흐름을 파악할 수 있습니다. 이러한 구조 덕분에 어떠한 문제가 생긴다면 디버깅하기가 매우 편리합니다.
 
-* Redux도
-* axios도
-* transformer도
-  **전혀 알 필요가 없음**
+## 점진적 마이그레이션 전략
 
-## 10. 점진적 마이그레이션 전략
-
-Redux를 한 번에 제거하지 않았습니다.
+해당 프로젝트에서 Redux의 규모가 너무 컸기 때문에 Redux를 한 번에 제거할 수 없었습니다.
+다음과 같이 reducer 하나씩 점진적으로 마이그레이션하기로 결정하였습니다.
 
 ### 적용 순서
 
@@ -333,10 +323,7 @@ Redux를 한 번에 제거하지 않았습니다.
 
 Redux와 Nanostores가 **공존 가능한 상태**를 유지하며 전환했습니다.
 
-## 마무리
+## 결론
 
-이 마이그레이션의 핵심은 기술 교체가 아닙니다.
-
-> **“한 곳이 너무 많은 책임을 가지지 않도록 구조를 나누어”** 리덕스보다 **더 단순하고 명확한 구조가 필요했습니다.**
-
-프론트엔드도 결국 **시간이 지나도 운영 가능한 시스템**이어야 합니다.
+대규모 Redux 에서 상태가 어디서 변화하고 문제가 생겼던 건지 확인하기가 매우 어려웠지만, 
+본 글에서 설명한 구조로 개선하면서 디버깅 난이도를 낮추고 가독성이 좋은 코드로 점진적으로 전환할 수 있었습니다.
