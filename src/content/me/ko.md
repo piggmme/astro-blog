@@ -34,12 +34,12 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 - **개요**: 기업용 협업 서비스. 게시판형 소통으로 특정 주제에 대해 글을 쓰고 댓글을 다는 쓰레드 방식.
 - **기술**: `Astro`, `React`, `TypeScript`, `SCSS`, `pnpm`, `Axios`, `SSE`, `Radix UI`, `Redux`, `Nanostore`
 - **내용**
-  - `Class Component`로 작성된 구 버전 React 16을 `Function Component`로 코드 리팩토링 및 React 18로 업데이트 ([블로그 글 참고](/posts/react/class-to-function))
-  - 복잡한 상태관리 라이브러리 `Redux`를 가독성을 개선하고 디버깅이 편리한 함수형 구조의 `API` + `Transformer` + `Store` 구조로 대규모 리팩토링 ([블로그 글 참고](/posts/react/redux-to-nanostore))
-  - `Astro` (SSR) 프레임워크를 도입하여 리팩토링 및 유지보수가 어려운 커다란 리액트 프로젝트를 점진적으로 업데이트가 가능한 Astro 로 전환 ([블로그 글 참고](/posts/FrontEnd/astrojs))
-  - `Docker`, `k8s` 를 사용하여 아스트로 서버를 배포하고 운영할 수 있는 환경 구축 ([블로그 글 참고](/posts/web/setting-infra))
-  - `k6` 를 활용해 부하 테스트를 진행하여 인프라 자원을 효율적으로 할당 ([블로그 글 참고](/posts/FrontEnd/tps-k6))
-  - 기존 서버 비용이 컸던 `Web Socket`기반 `phoenix`를 `SSE`로 전환 ([블로그 글 참고](/posts/web/sse))
+  - `Class Component`로 작성된 구 버전 React 16을 `Function Component`로 코드 리팩토링 및 React 18로 업데이트 ([블로그 글 참고](/ko/posts/react/class-to-function))
+  - 복잡한 상태관리 라이브러리 `Redux`를 가독성을 개선하고 디버깅이 편리한 함수형 구조의 `API` + `Transformer` + `Store` 구조로 대규모 리팩토링 ([블로그 글 참고](/ko/posts/react/redux-to-nanostore))
+  - `Astro` (SSR) 프레임워크를 도입하여 리팩토링 및 유지보수가 어려운 커다란 리액트 프로젝트를 점진적으로 업데이트가 가능한 Astro 로 전환 ([블로그 글 참고](/ko/posts/FrontEnd/astrojs))
+  - `Docker`, `k8s` 를 사용하여 아스트로 서버를 배포하고 운영할 수 있는 환경 구축 ([블로그 글 참고](/ko/posts/web/setting-infra))
+  - `k6` 를 활용해 부하 테스트를 진행하여 인프라 자원을 효율적으로 할당 ([블로그 글 참고](/ko/posts/FrontEnd/tps-k6))
+  - 기존 서버 비용이 컸던 `Web Socket`기반 `phoenix`를 `SSE`로 전환 ([블로그 글 참고](/ko/posts/web/sse))
 
 ## Side Projects
 
@@ -60,8 +60,8 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 
 ### 1. Frontend Architecture Modernization
 
-> - [React | 클래스 컴포넌트를 함수 컴포넌트로 마이그레이션하기](/posts/react/class-to-function)
-> - [Astro 프레임워크에 대한 고찰](/posts/FrontEnd/astrojs)
+> - [React | 클래스 컴포넌트를 함수 컴포넌트로 마이그레이션하기](/ko/posts/react/class-to-function)
+> - [Astro 프레임워크에 대한 고찰](/ko/posts/FrontEnd/astrojs)
 
 - **React v16.6 기반 레거시 프로젝트를 React 18 환경으로 업그레이드**하며 클래스 컴포넌트를 함수 컴포넌트로 전면 마이그레이션
 - 다수의 React 의존 라이브러리를 사용하는 환경에서, **React 버전 제약으로 인해 버그 수정이나 라이브러리 스펙 변경 시 코드 수정 비용이 과도하게 증가하는 문제를 인식**
@@ -73,7 +73,7 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 
 ### 2. State Management / 구조적 리팩토링
 
-> [복잡한 Redux에서 벗어나기 2026.01.04](/posts/react/redux-to-nanostore)
+> [복잡한 Redux에서 벗어나기 2026.01.04](/ko/posts/react/redux-to-nanostore)
 
 - 비동기 로직이 Redux middleware에 집중되어 **어떤 액션이 어떤 상태를 변경하는지 추적하기 어려운 구조를 문제로 인식**
 - 대규모 Redux 전역 상태 중 **개별 reducer를 하나씩 Nano Store로 점진적 마이그레이션**
@@ -86,7 +86,7 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 
 ### 3. Real-time System / SSE Architecture
 
-> [실시간 통신을 위한 SSE 아키텍처 설계: 3계층 구조로 구현한 확장 가능한 시스템](/posts/web/sse)
+> [실시간 통신을 위한 SSE 아키텍처 설계: 3계층 구조로 구현한 확장 가능한 시스템](/ko/posts/web/sse)
 
 - 실시간 알림 및 상태 동기화를 위해 **SSE 기반 실시간 통신 시스템을 3계층 구조로 설계**
   - 인프라 레이어: 연결 관리, 재연결, 구독 동기화
@@ -95,9 +95,9 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 
 ### 4. Deployment / Infra / Load Testing
 
-> - [사내 Docker hub와 k8s 기반 오케스트레이션 도구를 사용한 배포 환경 설정기](/posts/web/setting-infra)
-> - [ArgoCD Rollout로 Blue/Green 배포하기](/posts/web/argo-blue-green)
-> - [k6를 사용한 TPS 테스트](/posts/FrontEnd/tps-k6)
+> - [사내 Docker hub와 k8s 기반 오케스트레이션 도구를 사용한 배포 환경 설정기](/ko/posts/web/setting-infra)
+> - [ArgoCD Rollout로 Blue/Green 배포하기](/ko/posts/web/argo-blue-green)
+> - [k6를 사용한 TPS 테스트](/ko/posts/FrontEnd/tps-k6)
 
 - 사내 Docker Registry와 Kubernetes 기반 오케스트레이션 환경에서 **프론트엔드 서비스 배포 환경 구성**
 - Docker 이미지 빌드 → Registry 업로드 → Kubernetes 배포로 이어지는 **자동화된 배포 플로우 구축**
