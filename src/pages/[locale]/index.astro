@@ -168,7 +168,7 @@ const tags = uniqueTags
             flex: 0 0 auto;
             width: 100%;
             border-radius: 8px;
-            border: 1px solid $grey-200;
+            border: 1px solid var(--grey-200);
             padding: 8px 16px;
             display: flex;
             flex-direction: column;
@@ -176,7 +176,7 @@ const tags = uniqueTags
             transition: all 0.2s ease;
 
             &:hover {
-                border-color: $grey-400;
+                border-color: var(--grey-400);
             }
 
             .post-link {
@@ -230,13 +230,13 @@ const tags = uniqueTags
             word-break: keep-all;
         }
         .subtitle {
-            color: $grey-400;
+            color: var(--grey-400);
             font-size: rem(12px);
         }
 
         .expand-button {
             width: 100%;
-            color: $font-grey;
+            color: var(--font-grey);
             margin-top: 16px;
             padding: 8px 16px;
             border-radius: 8px;
@@ -248,11 +248,11 @@ const tags = uniqueTags
             align-items: center;
             justify-content: center;
             gap: 4px;
-            border: 1px solid $grey-200;
+            border: 1px solid var(--grey-200);
 
             &:hover {
-                border-color: $grey-400;
-                color: $font-black;
+                border-color: var(--grey-400);
+                color: var(--font-black);
             }
 
             &:active {

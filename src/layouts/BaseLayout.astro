@@ -42,7 +42,7 @@ const targetPath = currentPath.replace(/^\/(ko|en)/, `/${targetLocale}`);
 
 <style lang="scss">
   body {
-    color: $font-black;
+    color: var(--font-black);
   }
   h1 {
     font-size: rem(26px);
@@ -51,7 +51,7 @@ const targetPath = currentPath.replace(/^\/(ko|en)/, `/${targetLocale}`);
 
   .navbar {
     width: 100%;
-    max-width: $max-width-container;
+    max-width: var(--max-width-container);
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
@@ -62,7 +62,7 @@ const targetPath = currentPath.replace(/^\/(ko|en)/, `/${targetLocale}`);
     &-home {
       font-size: rem(20px);
       font-weight: 700;
-      color: $font-black;
+      color: var(--font-black);
       text-decoration: none;
 
       transition: opacity 0.2s ease;
@@ -84,11 +84,26 @@ const targetPath = currentPath.replace(/^\/(ko|en)/, `/${targetLocale}`);
           opacity: 0.7;
         }
       }
+
+      .lang-switcher {
+        font-size: rem(14px);
+        background: var(--grey-100);
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: var(--font-grey);
+        font-weight: 500;
+
+        &:hover {
+          background: var(--grey-200);
+          color: var(--font-black);
+          opacity: 1;
+        }
+      }
     }
   }
 
   main {
-    max-width: $max-width-container;
+    max-width: var(--max-width-container);
     margin: 0 auto;
     padding: 0 24px;
     box-sizing: border-box;
