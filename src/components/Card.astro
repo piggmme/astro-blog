@@ -1,22 +1,22 @@
 ---
 interface Props {
-  class?: string
-  as?: string
-  title?: string
-  subtitle?: string
+  class?: string;
+  as?: string;
+  title?: string;
+  subtitle?: string;
 }
 
-const { title, subtitle, as } = Astro.props as Props
-const As = as || 'div'
-
+const { title, subtitle, as } = Astro.props as Props;
+const As = as || "div";
 ---
-<As {...Astro.props} class:list={['card', Astro.props.class]}>
+
+<As {...Astro.props} class:list={["card", Astro.props.class]}>
   <h3>{title}</h3>
   <span>{subtitle}</span>
   <slot />
 </As>
 
-<style lang='scss'>
+<style lang="scss">
   .card {
     display: block;
     border: 1px solid #f7f7f7;
@@ -27,6 +27,6 @@ const As = as || 'div'
     box-sizing: border-box;
     overflow: hidden;
     padding: 16px;
-    background-color: $bg-grey;
+    background-color: var(--bg-grey);
   }
 </style>
