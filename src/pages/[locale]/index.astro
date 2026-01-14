@@ -1,0 +1,288 @@
+---
+import Card from "@/components/Card.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { camelize } from "@/utils/string";
+import "@/utils/dayjs";
+import { dayFormat } from "@/utils/dayjs";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { getCollection, type CollectionEntry } from "astro:content";
+import { ui } from "@/i18n/ui";
+
+export function getStaticPaths() {
+    return [{ params: { locale: "ko" } }, { params: { locale: "en" } }];
+}
+
+const { locale } = Astro.params;
+const t = ui[locale as keyof typeof ui];
+
+const allPosts = await getCollection("posts", ({ id }: { id: string }) => {
+    return id.startsWith(`${locale}/`);
+});
+
+const POST_ITEM_MAX_COUNT = 2;
+
+const uniqueTags = [
+    ...new Set(
+        allPosts.map((post: CollectionEntry<"posts">) => post.data.tags).flat(),
+    ),
+];
+const tags = uniqueTags
+    .map((tag) => {
+        const filteredPosts = allPosts.filter(
+            (post: CollectionEntry<"posts">) => post.data.tags.includes(tag),
+        );
+        filteredPosts.sort(
+            (a: CollectionEntry<"posts">, b: CollectionEntry<"posts">) => {
+                const aDate = new Date(a.data.pubDate);
+                const bDate = new Date(b.data.pubDate);
+                return bDate.getTime() - aDate.getTime();
+            },
+        );
+
+        const mappedPosts = filteredPosts.map((post, index) => {
+            const pathSegments = post.id.split("/");
+            const slug = pathSegments.slice(1).join("/").replace(/\.md$/, "");
+            const url = `/${locale}/posts/${slug}`;
+            return {
+                ...post,
+                url,
+                isHidden: index >= POST_ITEM_MAX_COUNT,
+            };
+        });
+
+        return {
+            tag,
+            posts: mappedPosts,
+        };
+    })
+    .sort((postA, postB) => {
+        const findLatest = (posts: any[]) => {
+            return posts.reduce((prev: any, current: any) => {
+                const prevDate = new Date(prev.data.pubDate);
+                const currentDate = new Date(current.data.pubDate);
+                return prevDate.getTime() > currentDate.getTime()
+                    ? prev
+                    : current;
+            });
+        };
+        const latestPostA = findLatest(postA.posts);
+        const latestPostB = findLatest(postB.posts);
+
+        const aDate = new Date(latestPostA.data.pubDate);
+        const bDate = new Date(latestPostB.data.pubDate);
+        return bDate.getTime() - aDate.getTime();
+    });
+---
+
+<BaseLayout title={t["home.title"]}>
+    <section class="home-header">
+        <h1>{t["home.title"]}</h1>
+        <p
+            set:html={(t["home.description"] as string).replace("\n", "<br />")}
+        />
+    </section>
+
+    {
+        tags.map(({ tag, posts }) => (
+            <section class="home-posts" data-tag={camelize(tag as string)}>
+                <h2>
+                    #{camelize(tag as string)} ({posts.length})
+                </h2>
+                <ul class="post-list">
+                    {posts.map((post) => (
+                        <li
+                            class:list={[
+                                "post-item",
+                                post.isHidden && "post-item-hidden",
+                            ]}
+                        >
+                            <a href={post.url} class="post-link">
+                                <div class="post-content">
+                                    <h3 class="title">{post.data.title}</h3>
+                                    <span>{post.data.description}</span>
+                                    <span class="subtitle">
+                                        {dayFormat(post.data.pubDate, locale)}
+                                    </span>
+                                </div>
+                                {post.data.image?.url && (
+                                    <div class="post-image">
+                                        <img
+                                            class="image"
+                                            src={post.data.image.url}
+                                            alt={post.data.image.alt}
+                                        />
+                                    </div>
+                                )}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+                {posts.length > POST_ITEM_MAX_COUNT && (
+                    <button class="expand-button" data-target={camelize(tag)}>
+                        {t["home.more"]}{" "}
+                        <ChevronDownIcon width={16} height={16} />
+                    </button>
+                )}
+            </section>
+        ))
+    }
+</BaseLayout>
+
+<style lang="scss">
+    .home-header {
+        margin-bottom: 24px;
+        padding: 36px 0;
+        h1 {
+            font-size: rem(48px);
+            font-weight: 700;
+        }
+        p {
+            font-size: rem(18px);
+            font-weight: 300;
+            line-height: 1.3;
+        }
+    }
+
+    .home-posts {
+        margin-bottom: 48px;
+        box-sizing: border-box;
+
+        h2 {
+            font-size: rem(24px);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .post-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            width: 100%;
+            box-sizing: border-box;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .post-item {
+            flex: 0 0 auto;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid $grey-200;
+            padding: 8px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s ease;
+
+            &:hover {
+                border-color: $grey-400;
+            }
+
+            .post-link {
+                display: flex;
+                flex-direction: row;
+                gap: 16px;
+                width: 100%;
+
+                @media screen and (max-width: 400px) {
+                    flex-direction: column;
+                }
+            }
+
+            .post-content {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                flex: 7;
+                min-width: 0;
+            }
+
+            .post-image {
+                flex: 3;
+                min-width: 0;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                .image {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    max-height: 100px;
+                    border-radius: 4px;
+                }
+            }
+        }
+
+        .post-item-hidden {
+            display: none;
+        }
+
+        .card {
+            position: relative;
+            padding: 16px;
+        }
+        .title {
+            font-size: rem(20px);
+            font-weight: 700;
+            word-break: keep-all;
+        }
+        .subtitle {
+            color: $grey-400;
+            font-size: rem(12px);
+        }
+
+        .expand-button {
+            width: 100%;
+            color: $font-grey;
+            margin-top: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: rem(14px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border: 1px solid $grey-200;
+
+            &:hover {
+                border-color: $grey-400;
+                color: $font-black;
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+
+        .expand-button.hidden {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const expandButtons = document.querySelectorAll(".expand-button");
+
+        expandButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const section = button.closest(".home-posts");
+                const hiddenItems =
+                    section?.querySelectorAll(".post-item-hidden");
+
+                if (hiddenItems) {
+                    hiddenItems.forEach((item) => {
+                        item.classList.remove("post-item-hidden");
+                    });
+                    button.classList.add("hidden");
+                }
+            });
+        });
+    });
+</script>
