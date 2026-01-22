@@ -1,32 +1,32 @@
 ---
-import HeadingTag from "@/components/HeadingTag.astro";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import type { MarkdownLayoutProps } from "astro";
-import dayjs from "dayjs";
+import HeadingTag from '@/components/HeadingTag.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import type { MarkdownLayoutProps } from 'astro'
+import dayjs from 'dayjs'
 
 interface Props {
   frontmatter: {
-    title: string;
-    author?: string;
-    description?: string;
-    pubDate?: string | Date;
+    title: string
+    author?: string
+    description?: string
+    pubDate?: string | Date
     image?: {
-      url: string;
-      alt?: string;
-    };
-  };
-  headings: any[];
+      url: string
+      alt?: string
+    }
+  }
+  headings: any[]
 }
 
 const { frontmatter, headings } = Astro.props;
 ---
 
 <BaseLayout title={frontmatter.title}>
-  <section class="header">
-    <h1 class="title">{frontmatter.title}</h1>
+  <section class='header'>
+    <h1 class='title'>{frontmatter.title}</h1>
     {
       frontmatter.pubDate && (
-        <p>{dayjs(frontmatter.pubDate).format("YYYY.MM.DD")}</p>
+        <p>{dayjs(frontmatter.pubDate).format('YYYY.MM.DD')}</p>
       )
     }
     {
@@ -36,21 +36,21 @@ const { frontmatter, headings } = Astro.props;
     }
   </section>
 
-  <div class="main">
-    <section class="markdown">
+  <div class='main'>
+    <section class='markdown'>
       <slot />
     </section>
     <nav>
       {
         headings.length !== 0 && (
-          <ul class="list">
-            {headings.map((head) => (
+          <ul class='list'>
+            {headings.map(head => (
               <li>
                 <a href={`#${head.slug}`}>
                   <HeadingTag level={head.depth}>
                     {Array.from({ length: head.depth - 1 }, (_, idx) =>
-                      idx === 0 ? "" : "ㅤ",
-                    ).join("")}
+                      idx === 0 ? '' : 'ㅤ',
+                    ).join('')}
                     {head.text}
                   </HeadingTag>
                 </a>
@@ -63,7 +63,7 @@ const { frontmatter, headings } = Astro.props;
   </div>
 </BaseLayout>
 
-<style lang="scss">
+<style lang='scss'>
   .header {
     display: block;
     padding-top: 48px;

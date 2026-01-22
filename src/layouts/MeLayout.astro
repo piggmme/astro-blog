@@ -1,22 +1,22 @@
 ---
-import HeadingTag from "@/components/HeadingTag.astro";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import type { MarkdownLayoutProps } from "astro";
+import HeadingTag from '@/components/HeadingTag.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import type { MarkdownLayoutProps } from 'astro'
 
 interface Props {
   frontmatter: {
-    title?: string;
-  };
-  headings?: any[];
+    title?: string
+  }
+  headings?: any[]
 }
 
-const { frontmatter, headings } = Astro.props;
-const title = frontmatter.title || "About Me";
+const { frontmatter, headings } = Astro.props
+const title = frontmatter.title || 'About Me';
 ---
 
 <BaseLayout title={title}>
-  <div class="main">
-    <section class="markdown">
+  <div class='main'>
+    <section class='markdown'>
       <slot />
     </section>
     <!-- {headings.length > 0 && (
@@ -38,7 +38,7 @@ const title = frontmatter.title || "About Me";
   </div>
 </BaseLayout>
 
-<style lang="scss">
+<style lang='scss'>
   .main {
     display: flex;
     justify-content: start;

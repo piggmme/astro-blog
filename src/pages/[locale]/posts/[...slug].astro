@@ -1,28 +1,28 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
-import MarkdownPostLayout from "../../../layouts/MarkdownPostLayout.astro";
+import { getCollection, type CollectionEntry } from 'astro:content'
+import MarkdownPostLayout from '../../../layouts/MarkdownPostLayout.astro'
 
-export async function getStaticPaths() {
-    const posts = await getCollection("posts");
-    return posts.map((entry: CollectionEntry<"posts">) => {
-        // entry.id is like 'ko/FrontEnd/web-push.md'
-        const [locale, ...pathSegments] = entry.id.split("/");
-        const slug = pathSegments.join("/").replace(/\.md$/, "");
-        return {
-            params: { locale, slug },
-            props: { entry },
-        };
-    });
+export async function getStaticPaths () {
+  const posts = await getCollection('posts')
+  return posts.map((entry: CollectionEntry<'posts'>) => {
+    // entry.id is like 'ko/FrontEnd/web-push.md'
+    const [locale, ...pathSegments] = entry.id.split('/')
+    const slug = pathSegments.join('/').replace(/\.md$/, '')
+    return {
+      params: { locale, slug },
+      props: { entry },
+    }
+  })
 }
 
 interface Props {
-    entry: CollectionEntry<"posts">;
+  entry: CollectionEntry<'posts'>
 }
 
-const { entry } = Astro.props;
+const { entry } = Astro.props
 const { Content, headings } = await entry.render();
 ---
 
 <MarkdownPostLayout frontmatter={entry.data} headings={headings}>
-    <Content />
+  <Content />
 </MarkdownPostLayout>

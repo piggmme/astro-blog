@@ -1,21 +1,21 @@
 ---
-import { getEntry } from "astro:content";
-import MeLayout from "@/layouts/MeLayout.astro";
+import { getEntry } from 'astro:content'
+import MeLayout from '@/layouts/MeLayout.astro'
 
-export function getStaticPaths() {
-    return [{ params: { locale: "ko" } }, { params: { locale: "en" } }];
+export function getStaticPaths () {
+  return [{ params: { locale: 'ko' } }, { params: { locale: 'en' } }]
 }
 
-const { locale } = Astro.params;
-const entry = await getEntry("me", locale as any);
+const { locale } = Astro.params
+const entry = await getEntry('me', locale as any)
 
 if (!entry) {
-    return Astro.redirect(`/${locale}`);
+  return Astro.redirect(`/${locale}`)
 }
 
 const { Content, headings } = await entry.render();
 ---
 
 <MeLayout frontmatter={entry.data} headings={headings}>
-    <Content />
+  <Content />
 </MeLayout>

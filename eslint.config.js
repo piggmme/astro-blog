@@ -1,31 +1,14 @@
-import eslintPluginAstro from 'eslint-plugin-astro'
-import stylistic from '@stylistic/eslint-plugin'
-import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
 import globals from 'globals'
-import reactPlugin from 'eslint-plugin-react'
+import eslint from '@eslint/js'
+import tsEslint from 'typescript-eslint'
+import stylistic from '@stylistic/eslint-plugin'
+import pluginAstro from 'eslint-plugin-astro'
+import pluginReact from 'eslint-plugin-react'
 
-export default [
-  eslint.configs.recommended,
-  ...tseslint.configs.strict,
-  ...tseslint.configs.stylistic,
-  ...eslintPluginAstro.configs.recommended,
+const stylisticConfig = [
   stylistic.configs.customize({
     semi: false,
   }),
-  {
-    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
-    ...reactPlugin.configs.flat['jsx-runtime'],
-  },
-  {
-    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
-    languageOptions: {
-      globals: {
-        ...globals.serviceworker,
-        ...globals.browser,
-      },
-    },
-  },
   {
     rules: {
       '@stylistic/function-call-spacing': 'error',
@@ -53,5 +36,64 @@ export default [
       '@stylistic/jsx-quotes': ['error', 'prefer-single'],
       '@stylistic/space-before-function-paren': ['error', 'always'],
     },
+  },
+]
+
+const tsConfig = [
+  ...tsEslint.configs.recommended,
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
+  ...stylisticConfig,
+]
+
+const reactConfig = [{
+  files: ['src/**/*.{js,jsx,tsx}'],
+  plugins: { react: pluginReact },
+  languageOptions: {
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
+    globals: {
+      ...globals.browser,
+    },
+  },
+}]
+
+const astroConfig = [
+  ...pluginAstro.configs.recommended,
+  {
+    files: [
+      'astro.config.mjs',
+      'src/**/*.astro',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+  },
+  ...stylisticConfig,
+]
+
+export default [
+  eslint.configs.recommended,
+  ...tsConfig,
+  ...reactConfig,
+  ...astroConfig,
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    ignores: ['dist/**'],
   },
 ]

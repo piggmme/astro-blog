@@ -1,134 +1,134 @@
 ---
-import Card from "@/components/Card.astro";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { camelize } from "@/utils/string";
-import "@/utils/dayjs";
-import { dayFormat } from "@/utils/dayjs";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { getCollection, type CollectionEntry } from "astro:content";
-import { ui } from "@/i18n/ui";
+import Card from '@/components/Card.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { camelize } from '@/utils/string'
+import '@/utils/dayjs'
+import { dayFormat } from '@/utils/dayjs'
+import { ChevronDownIcon } from '@radix-ui/react-icons'
+import { getCollection, type CollectionEntry } from 'astro:content'
+import { ui } from '@/i18n/ui'
 
-export function getStaticPaths() {
-    return [{ params: { locale: "ko" } }, { params: { locale: "en" } }];
+export function getStaticPaths () {
+  return [{ params: { locale: 'ko' } }, { params: { locale: 'en' } }]
 }
 
-const { locale } = Astro.params;
-const t = ui[locale as keyof typeof ui];
+const { locale } = Astro.params
+const t = ui[locale as keyof typeof ui]
 
-const allPosts = await getCollection("posts", ({ id }: { id: string }) => {
-    return id.startsWith(`${locale}/`);
-});
+const allPosts = await getCollection('posts', ({ id }: { id: string }) => {
+  return id.startsWith(`${locale}/`)
+})
 
-const POST_ITEM_MAX_COUNT = 2;
+const POST_ITEM_MAX_COUNT = 2
 
 const uniqueTags = [
-    ...new Set(
-        allPosts.map((post: CollectionEntry<"posts">) => post.data.tags).flat(),
-    ),
-];
+  ...new Set(
+    allPosts.map((post: CollectionEntry<'posts'>) => post.data.tags).flat(),
+  ),
+]
 const tags = uniqueTags
-    .map((tag) => {
-        const filteredPosts = allPosts.filter(
-            (post: CollectionEntry<"posts">) => post.data.tags.includes(tag),
-        );
-        filteredPosts.sort(
-            (a: CollectionEntry<"posts">, b: CollectionEntry<"posts">) => {
-                const aDate = new Date(a.data.pubDate);
-                const bDate = new Date(b.data.pubDate);
-                return bDate.getTime() - aDate.getTime();
-            },
-        );
+  .map((tag) => {
+    const filteredPosts = allPosts.filter(
+      (post: CollectionEntry<'posts'>) => post.data.tags.includes(tag),
+    )
+    filteredPosts.sort(
+      (a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => {
+        const aDate = new Date(a.data.pubDate)
+        const bDate = new Date(b.data.pubDate)
+        return bDate.getTime() - aDate.getTime()
+      },
+    )
 
-        const mappedPosts = filteredPosts.map((post, index) => {
-            const pathSegments = post.id.split("/");
-            const slug = pathSegments.slice(1).join("/").replace(/\.md$/, "");
-            const url = `/${locale}/posts/${slug}`;
-            return {
-                ...post,
-                url,
-                isHidden: index >= POST_ITEM_MAX_COUNT,
-            };
-        });
-
-        return {
-            tag,
-            posts: mappedPosts,
-        };
+    const mappedPosts = filteredPosts.map((post, index) => {
+      const pathSegments = post.id.split('/')
+      const slug = pathSegments.slice(1).join('/').replace(/\.md$/, '')
+      const url = `/${locale}/posts/${slug}`
+      return {
+        ...post,
+        url,
+        isHidden: index >= POST_ITEM_MAX_COUNT,
+      }
     })
-    .sort((postA, postB) => {
-        const findLatest = (posts: any[]) => {
-            return posts.reduce((prev: any, current: any) => {
-                const prevDate = new Date(prev.data.pubDate);
-                const currentDate = new Date(current.data.pubDate);
-                return prevDate.getTime() > currentDate.getTime()
-                    ? prev
-                    : current;
-            });
-        };
-        const latestPostA = findLatest(postA.posts);
-        const latestPostB = findLatest(postB.posts);
 
-        const aDate = new Date(latestPostA.data.pubDate);
-        const bDate = new Date(latestPostB.data.pubDate);
-        return bDate.getTime() - aDate.getTime();
-    });
+    return {
+      tag,
+      posts: mappedPosts,
+    }
+  })
+  .sort((postA, postB) => {
+    const findLatest = (posts: any[]) => {
+      return posts.reduce((prev: any, current: any) => {
+        const prevDate = new Date(prev.data.pubDate)
+        const currentDate = new Date(current.data.pubDate)
+        return prevDate.getTime() > currentDate.getTime()
+          ? prev
+          : current
+      })
+    }
+    const latestPostA = findLatest(postA.posts)
+    const latestPostB = findLatest(postB.posts)
+
+    const aDate = new Date(latestPostA.data.pubDate)
+    const bDate = new Date(latestPostB.data.pubDate)
+    return bDate.getTime() - aDate.getTime()
+  });
 ---
 
-<BaseLayout title={t["home.title"]}>
-    <section class="home-header">
-        <h1>{t["home.title"]}</h1>
-        <p
-            set:html={(t["home.description"] as string).replace("\n", "<br />")}
-        />
-    </section>
+<BaseLayout title={t['home.title']}>
+  <section class='home-header'>
+    <h1>{t['home.title']}</h1>
+    <p
+      set:html={(t['home.description'] as string).replace('\n', '<br />')}
+    />
+  </section>
 
-    {
-        tags.map(({ tag, posts }) => (
-            <section class="home-posts" data-tag={camelize(tag as string)}>
-                <h2>
-                    #{camelize(tag as string)} ({posts.length})
-                </h2>
-                <ul class="post-list">
-                    {posts.map((post) => (
-                        <li
-                            class:list={[
-                                "post-item",
-                                post.isHidden && "post-item-hidden",
-                            ]}
-                        >
-                            <a href={post.url} class="post-link">
-                                <div class="post-content">
-                                    <h3 class="title">{post.data.title}</h3>
-                                    <span>{post.data.description}</span>
-                                    <span class="subtitle">
-                                        {dayFormat(post.data.pubDate, locale)}
-                                    </span>
-                                </div>
-                                {post.data.image?.url && (
-                                    <div class="post-image">
-                                        <img
-                                            class="image"
-                                            src={post.data.image.url}
-                                            alt={post.data.image.alt}
-                                        />
-                                    </div>
-                                )}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-                {posts.length > POST_ITEM_MAX_COUNT && (
-                    <button class="expand-button" data-target={camelize(tag)}>
-                        {t["home.more"]}{" "}
-                        <ChevronDownIcon width={16} height={16} />
-                    </button>
+  {
+    tags.map(({ tag, posts }) => (
+      <section class='home-posts' data-tag={camelize(tag as string)}>
+        <h2>
+          #{camelize(tag as string)} ({posts.length})
+        </h2>
+        <ul class='post-list'>
+          {posts.map(post => (
+            <li
+              class:list={[
+                'post-item',
+                post.isHidden && 'post-item-hidden',
+              ]}
+            >
+              <a href={post.url} class='post-link'>
+                <div class='post-content'>
+                  <h3 class='title'>{post.data.title}</h3>
+                  <span>{post.data.description}</span>
+                  <span class='subtitle'>
+                    {dayFormat(post.data.pubDate, locale)}
+                  </span>
+                </div>
+                {post.data.image?.url && (
+                  <div class='post-image'>
+                    <img
+                      class='image'
+                      src={post.data.image.url}
+                      alt={post.data.image.alt}
+                    />
+                  </div>
                 )}
-            </section>
-        ))
-    }
+              </a>
+            </li>
+          ))}
+        </ul>
+        {posts.length > POST_ITEM_MAX_COUNT && (
+          <button class='expand-button' data-target={camelize(tag)}>
+            {t['home.more']}{' '}
+            <ChevronDownIcon width={16} height={16} />
+          </button>
+        )}
+      </section>
+    ))
+  }
 </BaseLayout>
 
-<style lang="scss">
+<style lang='scss'>
     .home-header {
         margin-bottom: 24px;
         padding: 36px 0;
@@ -267,22 +267,22 @@ const tags = uniqueTags
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const expandButtons = document.querySelectorAll(".expand-button");
+document.addEventListener('DOMContentLoaded', () => {
+  const expandButtons = document.querySelectorAll('.expand-button')
 
-        expandButtons.forEach((button) => {
-            button.addEventListener("click", () => {
-                const section = button.closest(".home-posts");
-                const hiddenItems =
-                    section?.querySelectorAll(".post-item-hidden");
+  expandButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const section = button.closest('.home-posts')
+      const hiddenItems
+                = section?.querySelectorAll('.post-item-hidden')
 
-                if (hiddenItems) {
-                    hiddenItems.forEach((item) => {
-                        item.classList.remove("post-item-hidden");
-                    });
-                    button.classList.add("hidden");
-                }
-            });
-        });
-    });
+      if (hiddenItems) {
+        hiddenItems.forEach((item) => {
+          item.classList.remove('post-item-hidden')
+        })
+        button.classList.add('hidden')
+      }
+    })
+  })
+})
 </script>
