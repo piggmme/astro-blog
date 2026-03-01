@@ -4,6 +4,8 @@ title: 'About Me'
 
 # @dev_hee
 
+<img width="500" src="/images/me.jpeg" />
+
 ## About Me
 
 레거시 React 기반 프론트엔드 서비스를 **React 18 · Astro · TypeScript 중심으로 현대화**하고,<br/>

@@ -4,6 +4,8 @@ title: 'About Me'
 
 # @dev_hee
 
+<img width="500" src="/images/me.jpeg" />
+
 ## About Me
 
 I am a frontend engineer specializing in **modernizing legacy React-based services using React 18, Astro, and TypeScript**. I focus on building **scalable and debuggable architectures** by optimizing state management, real-time communication, and deployment environments. Beyond UI implementation, I prioritize **maintenance costs, operational stability, and long-term technical extensibility**.
