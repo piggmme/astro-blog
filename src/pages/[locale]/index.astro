@@ -85,8 +85,9 @@ const tags = uniqueTags
   {
     tags.map(({ tag, posts }) => (
       <section class='home-posts' data-tag={camelize(tag as string)}>
-        <h2>
-          #{camelize(tag as string)} ({posts.length})
+        <h2 class='tag-title'>
+          {camelize(tag as string)}
+          <span class='tag-count'>{posts.length}</span>
         </h2>
         <ul class='post-list'>
           {posts.map(post => (
@@ -99,7 +100,9 @@ const tags = uniqueTags
               <a href={post.url} class='post-link'>
                 <div class='post-content'>
                   <h3 class='title'>{post.data.title}</h3>
-                  <span>{post.data.description}</span>
+                  {post.data.description && (
+                    <p class='description'>{post.data.description}</p>
+                  )}
                   <span class='subtitle'>
                     {dayFormat(post.data.pubDate, locale)}
                   </span>
@@ -129,141 +132,173 @@ const tags = uniqueTags
 </BaseLayout>
 
 <style lang='scss'>
-    .home-header {
-        margin-bottom: 24px;
-        padding: 36px 0;
-        h1 {
-            font-size: rem(48px);
-            font-weight: 700;
-        }
-        p {
-            font-size: rem(18px);
-            font-weight: 300;
-            line-height: 1.3;
-        }
+  .home-header {
+    padding: 96px 0 72px;
+
+    h1 {
+      font-size: rem(56px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--grey-900);
     }
 
-    .home-posts {
-        margin-bottom: 48px;
-        box-sizing: border-box;
+    p {
+      margin-top: 16px;
+      font-size: rem(18px);
+      line-height: 1.6;
+      color: var(--grey-600);
+    }
+  }
 
-        h2 {
-            font-size: rem(24px);
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
+  .home-posts {
+    max-width: 880px;
+    margin-bottom: 64px;
 
-        .post-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-            width: 100%;
-            box-sizing: border-box;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .tag-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: rem(22px);
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--grey-900);
+    }
 
-        .post-item {
-            flex: 0 0 auto;
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid var(--grey-200);
-            padding: 8px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            transition: all 0.2s ease;
+    .tag-count {
+      color: var(--grey-400);
+      font-weight: 500;
+    }
 
-            &:hover {
-                border-color: var(--grey-400);
-            }
+    .post-list {
+      display: flex;
+      flex-direction: column;
+    }
 
-            .post-link {
-                display: flex;
-                flex-direction: row;
-                gap: 16px;
-                width: 100%;
+    .post-item {
+      border-bottom: 1px solid var(--grey-100);
 
-                @media screen and (max-width: 400px) {
-                    flex-direction: column;
-                }
-            }
+      // 더보기 전에는 숨겨진 글 바로 앞 아이템이 화면상 마지막이다
+      &:last-child,
+      &:has(+ .post-item-hidden) {
+        border-bottom: 0;
+      }
+    }
 
-            .post-content {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                flex: 7;
-                min-width: 0;
-            }
+    .post-item-hidden {
+      display: none;
+    }
 
-            .post-image {
-                flex: 3;
-                min-width: 0;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+    .post-link {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin: 0 -16px;
+      padding: 20px 16px;
+      border-radius: 16px;
+      transition: background 0.2s ease;
 
-                .image {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    max-height: 100px;
-                    border-radius: 4px;
-                }
-            }
-        }
+      &:hover {
+        background: var(--grey-50);
 
-        .post-item-hidden {
-            display: none;
-        }
-
-        .card {
-            position: relative;
-            padding: 16px;
-        }
         .title {
-            font-size: rem(20px);
-            font-weight: 700;
-            word-break: keep-all;
+          color: var(--accent);
         }
-        .subtitle {
-            color: var(--grey-400);
-            font-size: rem(12px);
-        }
+      }
 
-        .expand-button {
-            width: 100%;
-            color: var(--font-grey);
-            margin-top: 16px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: rem(14px);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            border: 1px solid var(--grey-200);
-
-            &:hover {
-                border-color: var(--grey-400);
-                color: var(--font-black);
-            }
-
-            &:active {
-                transform: scale(0.98);
-            }
-        }
-
-        .expand-button.hidden {
-            display: none;
-        }
+      @media screen and (max-width: 480px) {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 12px;
+      }
     }
+
+    .post-content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .title {
+      font-size: rem(19px);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+      color: var(--grey-900);
+      word-break: keep-all;
+      transition: color 0.2s ease;
+    }
+
+    .description {
+      font-size: rem(15px);
+      line-height: 1.6;
+      color: var(--grey-600);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--grey-500);
+      font-size: rem(13px);
+    }
+
+    .post-image {
+      flex: 0 0 160px;
+
+      .image {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-radius: 12px;
+        background: var(--grey-100);
+      }
+
+      @media screen and (max-width: 480px) {
+        flex-basis: auto;
+      }
+    }
+
+    .expand-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 12px;
+      padding: 4px 0;
+      color: var(--grey-600);
+      font-size: rem(14px);
+      font-weight: 600;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+
+    .expand-button.hidden {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .home-header {
+      padding: 56px 0 40px;
+
+      h1 {
+        font-size: rem(40px);
+      }
+
+      p {
+        font-size: rem(16px);
+      }
+    }
+  }
 </style>
 
 <script>

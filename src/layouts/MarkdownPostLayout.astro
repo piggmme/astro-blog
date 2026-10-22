@@ -1,8 +1,8 @@
 ---
-import HeadingTag from '@/components/HeadingTag.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import type { MarkdownLayoutProps } from 'astro'
+import { camelize } from '@/utils/string'
 import dayjs from 'dayjs'
+import '@/styles/markdown.scss'
 
 interface Props {
   frontmatter: {
@@ -10,289 +10,204 @@ interface Props {
     author?: string
     description?: string
     pubDate?: string | Date
+    tags?: string[]
     image?: {
       url: string
       alt?: string
     }
   }
-  headings: any[]
+  headings: { depth: number, slug: string, text: string }[]
 }
 
-const { frontmatter, headings } = Astro.props;
+const { frontmatter, headings } = Astro.props
+const locale = Astro.currentLocale || 'ko'
+
+// 본문이 제목과 같은 h1 으로 시작하면 헤더와 겹치므로 뺀다
+const stripTags = (html: string) => html.replace(/<[^>]+>/g, '').trim()
+const rawHtml = await Astro.slots.render('default')
+const firstH1 = rawHtml.match(/^\s*<h1[^>]*>([\s\S]*?)<\/h1>/)
+const isTitleDuplicated = firstH1 && stripTags(firstH1[1]) === frontmatter.title.trim()
+const contentHtml = isTitleDuplicated ? rawHtml.slice(firstH1[0].length) : rawHtml
+
+const tocHeadings = headings.filter(
+  head => head.depth <= 3 && !(head.depth === 1 && head.text.trim() === frontmatter.title.trim()),
+)
+const minDepth = Math.min(...tocHeadings.map(head => head.depth))
 ---
 
 <BaseLayout title={frontmatter.title}>
-  <section class='header'>
-    <h1 class='title'>{frontmatter.title}</h1>
-    {
-      frontmatter.pubDate && (
-        <p>{dayjs(frontmatter.pubDate).format('YYYY.MM.DD')}</p>
-      )
-    }
-    {
-      frontmatter.image && (
-        <img src={frontmatter.image.url} alt={frontmatter.image.alt} />
-      )
-    }
-  </section>
-
-  <div class='main'>
-    <section class='markdown'>
-      <slot />
-    </section>
-    <nav>
+  <article class='post'>
+    <header class='post-header'>
       {
-        headings.length !== 0 && (
-          <ul class='list'>
-            {headings.map(head => (
-              <li>
-                <a href={`#${head.slug}`}>
-                  <HeadingTag level={head.depth}>
-                    {Array.from({ length: head.depth - 1 }, (_, idx) =>
-                      idx === 0 ? '' : 'ㅤ',
-                    ).join('')}
-                    {head.text}
-                  </HeadingTag>
-                </a>
-              </li>
+        frontmatter.tags && frontmatter.tags.length > 0 && (
+          <ul class='post-tags'>
+            {frontmatter.tags.map(tag => (
+              <li>{camelize(tag)}</li>
             ))}
           </ul>
         )
       }
-    </nav>
-  </div>
+      <h1 class='post-title'>{frontmatter.title}</h1>
+      {
+        frontmatter.description && (
+          <p class='post-description'>{frontmatter.description}</p>
+        )
+      }
+      {
+        frontmatter.pubDate && (
+          <time class='post-date'>
+            {dayjs(frontmatter.pubDate).format('YYYY.MM.DD')}
+          </time>
+        )
+      }
+      {
+        frontmatter.image && (
+          <img
+            class='post-cover'
+            src={frontmatter.image.url}
+            alt={frontmatter.image.alt}
+          />
+        )
+      }
+    </header>
+
+    <div class='post-body'>
+      <section class='markdown' set:html={contentHtml} />
+      {
+        tocHeadings.length > 0 && (
+          <aside class='toc'>
+            <p class='toc-label'>{locale === 'ko' ? '목차' : 'On this page'}</p>
+            <ul>
+              {tocHeadings.map(head => (
+                <li style={`--toc-indent: ${head.depth - minDepth}`}>
+                  <a href={`#${head.slug}`}>{head.text}</a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )
+      }
+    </div>
+  </article>
 </BaseLayout>
 
 <style lang='scss'>
-  .header {
-    display: block;
-    padding-top: 48px;
-    padding-bottom: 60px;
-    width: 100%;
-    box-sizing: border-box;
-
-    .title {
-      font-size: rem(32px);
-      font-weight: 700;
-      margin: 0;
-    }
-
-    p {
-      font-size: rem(14px);
-      color: var(--grey-500);
-      margin: 8px 0;
-    }
-
-    img {
-      max-width: 500px;
-      margin: 0 auto;
-    }
+  .post-header {
+    max-width: var(--max-width-content);
+    padding: 72px 0 56px;
   }
 
-  .main {
+  .post-tags {
     display: flex;
-    justify-content: start;
-    align-items: start;
-    height: auto;
-    width: 100%;
-    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
 
-    .markdown {
-      flex: 8;
-      min-width: 0;
-      box-sizing: border-box;
-      padding-right: 30px;
-    }
-
-    nav {
-      flex: 0 0 auto;
-      max-width: 250px;
-      min-width: 200px;
-      position: sticky;
-      top: 16px;
-      right: 0px;
-      box-sizing: border-box;
-
-      .list li,
-      .list a,
-      .list h1,
-      .list h2,
-      .list h3,
-      .list h4,
-      .list h5,
-      .list h6 {
-        white-space: normal;
-        text-overflow: clip;
-        overflow: visible;
-        word-break: break-word;
-      }
-
-      .list h1,
-      .list h2 {
-        font-size: rem(14px);
-      }
-      .list h3,
-      .list h4 {
-        font-size: rem(12px);
-      }
-      .list h5,
-      .list h6 {
-        font-size: rem(10px);
-      }
-      .list h1 {
-        font-weight: 700;
-        font-size: rem(16px);
-      }
-      .list h2 {
-        font-weight: 600;
-      }
-      .list h3 {
-        font-weight: 400;
-      }
+    li {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-size: rem(13px);
+      font-weight: 600;
     }
   }
 
-  @media screen and (max-width: 1000px) {
-    .main {
-      nav {
-        display: none;
-      }
-
-      .markdown {
-        max-width: 100%;
-        padding-right: 0;
-      }
-    }
+  .post-title {
+    font-size: rem(40px);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+    color: var(--grey-900);
+    word-break: keep-all;
   }
 
-  .markdown li,
-  .markdown a,
-  .markdown h1,
-  .markdown h2,
-  .markdown h3,
-  .markdown h4,
-  .markdown h5,
-  .markdown h6 {
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  .markdown h1,
-  .markdown h2 {
-    font-size: rem(14px);
-  }
-  .markdown h3,
-  .markdown h4 {
-    font-size: rem(12px);
-  }
-  .markdown h5,
-  .markdown h6 {
-    font-size: rem(10px);
-  }
-  .markdown h1 {
-    font-weight: 700;
-    font-size: rem(16px);
-  }
-  .markdown h2 {
-    font-weight: 600;
-  }
-  .markdown h3 {
-    font-weight: 400;
-  }
-  .markdown h4,
-  .markdown h5,
-  .markdown h6 {
-    color: var(--grey-400);
-  }
-</style>
-
-<style is:global>
-  .markdown {
-    img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    /* Markdown 스타일 */
-    font-family:
-      "Pretendard Variable",
-      Pretendard,
-      -apple-system,
-      BlinkMacSystemFont,
-      system-ui,
-      Roboto,
-      "Helvetica Neue",
-      "Segoe UI",
-      "Apple SD Gothic Neo",
-      "Noto Sans KR",
-      "Malgun Gothic",
-      "Apple Color Emoji",
-      "Segoe UI Emoji",
-      "Segoe UI Symbol",
-      sans-serif;
+  .post-description {
+    margin-top: 16px;
+    font-size: rem(18px);
     line-height: 1.6;
-    color: #191f28;
+    color: var(--grey-600);
+  }
 
-    h1 {
-      font-size: 2rem;
-      color: #191f28;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 0.3rem;
-    }
+  .post-date {
+    display: block;
+    margin-top: 20px;
+    font-size: rem(14px);
+    color: var(--grey-500);
+  }
 
-    blockquote {
-      border-left: 4px solid #ddd;
-      margin: 1rem 0;
-      padding: 0.5rem 1rem;
-    }
+  .post-cover {
+    max-width: 100%;
+    margin-top: 32px;
+    border-radius: 16px;
+  }
 
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 1rem 0;
-    }
+  .post-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 64px;
+  }
 
-    th {
-      background-color: #f8f8f8;
-    }
+  .markdown {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: var(--max-width-content);
+  }
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 0.5rem;
-    }
+  .toc {
+    flex: 0 0 240px;
+    position: sticky;
+    top: 92px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-left: 16px;
+    border-left: 1px solid var(--grey-200);
 
-    ul,
-    ol {
-      margin: 1rem 0;
-      padding-left: 2rem;
-    }
-
-    p {
-      margin: 1rem 0;
-    }
-
-    pre {
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto; /* 긴 코드 스크롤 가능 */
-      font-family: "Courier New", monospace;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-
-    pre code {
-      font-size: 1rem;
-    }
-
-    /* ✅ 2. 인라인 코드 스타일 (`<code>...</code>` 형태) */
-    :not(pre) code {
-      color: #d63384; /* 붉은색 강조 */
+    &-label {
+      margin-bottom: 12px;
+      font-size: rem(12px);
       font-weight: 700;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      background-color: #eaecee;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--grey-500);
+    }
+
+    li {
+      padding-left: calc(var(--toc-indent) * 12px);
+    }
+
+    a {
+      display: block;
+      padding: 4px 0;
+      font-size: rem(13px);
+      line-height: 1.5;
+      color: var(--grey-600);
+      word-break: keep-all;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .toc {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .post-header {
+      padding: 40px 0 40px;
+    }
+
+    .post-title {
+      font-size: rem(30px);
+    }
+
+    .post-description {
+      font-size: rem(16px);
     }
   }
 </style>

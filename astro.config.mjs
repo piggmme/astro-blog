@@ -12,6 +12,11 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
+  markdown: {
+    shikiConfig: {
+      theme: 'github-light',
+    },
+  },
   integrations: [react({
     experimentalReactChildren: true,
   })],

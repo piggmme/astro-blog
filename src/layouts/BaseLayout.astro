@@ -14,90 +14,129 @@ const targetPath = currentPath.replace(/^\/(ko|en)/, `/${targetLocale}`);
     <link rel='icon' href='/favicon.ico' />
     <meta name='viewport' content='width=device-width' />
     <meta name='generator' content={Astro.generator} />
+    <link rel='preconnect' href='https://fonts.googleapis.com' />
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+    <link
+      rel='stylesheet'
+      href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap'
+    />
     <title>{title}</title>
   </head>
   <body>
-    <nav class='navbar'>
-      <div class='navbar-home'>
-        <a href={`/${locale}`}> @dev_hee </a>
+    <header class='navbar'>
+      <div class='navbar-inner'>
+        <a class='navbar-home' href={`/${locale}`}>@dev_hee</a>
+        <nav class='navbar-links'>
+          <a class='lang-switcher' href={targetPath}>
+            {targetLocale === 'ko' ? 'KO' : 'EN'}
+          </a>
+          <a class='navbar-text' href={`/${locale}/me`}>me</a>
+          <a
+            class='navbar-icon'
+            href='https://github.com/piggmme'
+            target='_blank'
+            aria-label='GitHub'
+          >
+            <GitHubLogoIcon width={18} height={18} />
+          </a>
+          <a
+            class='navbar-icon'
+            href='https://www.linkedin.com/in/dev-hee'
+            target='_blank'
+            aria-label='LinkedIn'
+          >
+            <LinkedInLogoIcon width={18} height={18} />
+          </a>
+        </nav>
       </div>
-      <div class='navbar-links'>
-        <a href={targetPath}>
-          {targetLocale === 'ko' ? 'A' : '가'}
-        </a>
-        <a href={`/${locale}/me`}> me </a>
-        <a href='https://github.com/piggmme' target='_blank'>
-          <GitHubLogoIcon width={20} height={20} />
-        </a>
-        <a href='https://www.linkedin.com/in/dev-hee' target='_blank'>
-          <LinkedInLogoIcon width={20} height={20} />
-        </a>
-      </div>
-    </nav>
+    </header>
     <main>
       <slot />
     </main>
+    <footer class='footer'>
+      <span>© dev_hee</span>
+      <a href='mailto:kheeyaa888@gmail.com?subject=[After%20Reading%20Blog]'>
+        kheeyaa888@gmail.com
+      </a>
+    </footer>
   </body>
 </html>
 
 <style lang='scss'>
   body {
     color: var(--font-black);
+    background: #fff;
   }
-  h1 {
-    font-size: rem(26px);
-    font-weight: 700;
+
+  :global(::selection) {
+    background: var(--pink-100);
+    color: var(--grey-900);
   }
 
   .navbar {
-    width: 100%;
-    max-width: var(--max-width-container);
-    margin: 0 auto;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--grey-100);
+
+    &-inner {
+      max-width: var(--max-width-container);
+      margin: 0 auto;
+      height: 60px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     &-home {
-      font-size: rem(20px);
-      font-weight: 700;
-      color: var(--font-black);
-      text-decoration: none;
-
-      transition: opacity 0.2s ease;
-      &:hover {
-        opacity: 0.7;
-      }
+      font-size: rem(18px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--grey-900);
     }
 
     &-links {
       display: flex;
-      gap: 24px;
+      gap: 4px;
       align-items: center;
-      font-size: rem(16px);
-      font-weight: 700;
+    }
 
-      a {
-        transition: opacity 0.2s ease;
-        &:hover {
-          opacity: 0.7;
-        }
-      }
+    &-text,
+    &-icon {
+      display: flex;
+      align-items: center;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 8px;
+      color: var(--grey-600);
+      font-size: rem(15px);
+      font-weight: 600;
+      transition: background 0.2s ease, color 0.2s ease;
 
-      .lang-switcher {
-        font-size: rem(14px);
+      &:hover {
         background: var(--grey-100);
-        padding: 4px 10px;
-        border-radius: 6px;
-        color: var(--font-grey);
-        font-weight: 500;
+        color: var(--grey-900);
+      }
+    }
 
-        &:hover {
-          background: var(--grey-200);
-          color: var(--font-black);
-          opacity: 1;
-        }
+    .lang-switcher {
+      margin-right: 4px;
+      padding: 3px 8px;
+      border: 1px solid var(--grey-200);
+      border-radius: 6px;
+      color: var(--grey-600);
+      font-size: rem(12px);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: border-color 0.2s ease, color 0.2s ease;
+
+      &:hover {
+        border-color: var(--grey-400);
+        color: var(--grey-900);
       }
     }
   }
@@ -106,7 +145,23 @@ const targetPath = currentPath.replace(/^\/(ko|en)/, `/${targetLocale}`);
     max-width: var(--max-width-container);
     margin: 0 auto;
     padding: 0 24px;
-    box-sizing: border-box;
-    margin-bottom: 100px;
+    min-height: calc(100vh - 60px - 120px);
+  }
+
+  .footer {
+    max-width: var(--max-width-container);
+    margin: 120px auto 0;
+    padding: 32px 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--grey-100);
+    color: var(--grey-500);
+    font-size: rem(14px);
+
+    a:hover {
+      color: var(--grey-900);
+    }
   }
 </style>
