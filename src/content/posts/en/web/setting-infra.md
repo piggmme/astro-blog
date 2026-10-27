@@ -1,7 +1,7 @@
 ---
-title: '사내 Docker hub와 k8s 기반 오케스트레이션 도구를 사용한 배포 환경 설정기'
+title: 'Setting Up a Deployment Environment with an In-House Docker Hub and a k8s-Based Orchestration Tool'
 pubDate: 2024-8-20
-description: '사내 Docker hub와 k8s 기반 오케스트레이션 도구를 사용한 배포 환경 설정기'
+description: 'Setting Up a Deployment Environment with an In-House Docker Hub and a k8s-Based Orchestration Tool'
 author: 'dev_hee'
 image:
     url: ''
@@ -10,234 +10,234 @@ tags: ["Web"]
 
 ---
 
-> 본 문은 필자가 사내에서 Docker 기반으로 서비스 배포를 배포하는 과정을 정리한 글이다.
+> This post is a write-up of the process the author went through to deploy a service on Docker at work.
 
-## 들어가기 전에...
+## Before we begin...
 
 ### 🐳 Docker
 
-Docker는 애플리케이션을 더 쉽게 배포 및 실행할 수 있게 해주는 컨테이너 기반 가상화 플랫폼이다. Docker는 개발 환경과 운영 환경에서 일관성을 유지할 수 있도록 돕는 도구로, **"컨테이너"라는 경량화된 가상 환경에서 애플리케이션과 그 의존성들을 격리된 상태로 실행**할 수 있게 한다.
+Docker is a container-based virtualization platform that makes it easier to deploy and run applications. Docker is a tool that helps maintain consistency between development and production environments, letting you **run an application and its dependencies in isolation within a lightweight virtual environment called a "container"**.
 
-- **컨테이너(Container)**: 애플리케이션과 그 실행 환경(라이브러리, 종속 패키지 등)을 포함하는 가상화된 패키지이다. 여러 컨테이너가 하나의 운영체제(OS)에서 독립적으로 실행되어 하나가 문제가 생기더라도 다른 곳에 영향을 미치지 않는다. 그리고 하나의 운영체제(OS)에서 실행되기 때문에 그 자원을 공유하여 성능이 더 뛰어나고 가볍다.
+- **Container**: A virtualized package that includes an application and its runtime environment (libraries, dependent packages, etc.). Multiple containers run independently on a single operating system (OS), so even if one has a problem it doesn't affect the others. And because they run on a single operating system (OS), they share its resources, making them better-performing and lightweight.
 
-- **이미지(Image)**: 실행 가능한 애플리케이션과 환경 설정이 포함된 불변의 파일 시스템 스냅샷이다. 이미지는 읽기 전용이며, 이를 기반으로 컨테이너를 생성하고 실행한다.
+- **Image**: An immutable file system snapshot that includes an executable application and its configuration. Images are read-only, and containers are created and run based on them.
 
-- **도커 허브(Docker Hub)**: 다양한 애플리케이션의 Docker 이미지를 저장하고 공유하는 저장소이다. 공개된 이미지 외에도 사용자가 자신만의 이미지를 업로드할 수 있다.
+- **Docker Hub**: A repository for storing and sharing Docker images of various applications. Besides public images, users can also upload their own images.
 
-도커를 사용하는 이유는 다음과 같다.
+The reasons for using Docker are as follows.
 
-- **이식성(Portability)**: 개발 환경과 운영 환경 간의 **일관성**을 유지하므로, "내 컴퓨터에서는 작동하는데 서버에서는 안 돼"와 같은 문제가 줄어든다.
-- **경량화(Lightweight)**: 가상머신(VM)보다 가벼워 리소스를 적게 사용하고, 더 빠르게 실행된다.
-- **확장성(Scalability)**: 마이크로서비스 아키텍처를 지원하여 애플리케이션을 다양한 서비스 단위로 나누어 관리할 수 있다.
+- **Portability**: It maintains **consistency** between development and production environments, reducing problems like "it works on my machine but not on the server."
+- **Lightweight**: It's lighter than a virtual machine (VM), so it uses fewer resources and runs faster.
+- **Scalability**: It supports microservice architecture, so you can split an application into various service units and manage them.
 
-Docker는 애플리케이션을 다양한 환경에서 동일하게 실행할 수 있도록 도와주는 도구이다.
+Docker is a tool that helps run applications identically across various environments.
 
 ### 🚢 Kubernetes
 
-쿠버네티스(Kubernetes)는 컨테이너화된 애플리케이션의 **배포, 확장 및 관리를 자동화**하는 오픈소스 컨테이너 오케스트레이션 플랫폼이다. 구글에서 개발했으며, 현재는 클라우드 네이티브 컴퓨팅 재단(CNCF)에서 관리하고 있다.
+Kubernetes is an open-source container orchestration platform that **automates the deployment, scaling, and management** of containerized applications. It was developed by Google and is now managed by the Cloud Native Computing Foundation (CNCF).
 
-- **컨테이너 오케스트레이션**: 다수의 컨테이너를 클러스터 환경에서 자동으로 배포하고, 확장하며, 관리를 수행하는 작업을 의미한다. 쿠버네티스는 이러한 작업을 효율적으로 처리해 준다.
+- **Container orchestration**: Refers to the work of automatically deploying, scaling, and managing many containers in a cluster environment. Kubernetes handles this work efficiently.
 
-- **클러스터(Cluster)**: 쿠버네티스에서 클러스터는 컨테이너를 실행하는 노드(Node)들의 집합. 일반적으로 하나 이상의 마스터 노드와 여러 워커 노드로 구성된다.
+- **Cluster**: In Kubernetes, a cluster is a set of nodes that run containers. It's typically made up of one or more master nodes and several worker nodes.
 
-- **파드(Pod)**: 쿠버네티스에서 가장 작은 배포 단위로, 하나 이상의 컨테이너를 포함할 수 있다. 같은 파드 내의 컨테이너들은 네트워크 및 저장소 자원을 공유한다.
+- **Pod**: The smallest deployment unit in Kubernetes, which can contain one or more containers. Containers in the same pod share network and storage resources.
 
-- **서비스(Service)**: 파드들은 동적으로 생성되고 삭제될 수 있기 때문에, 파드들의 네트워크 경로를 관리하기 위해 사용된다. 서비스는 파드들의 집합에 대해 단일 IP 주소와 DNS 이름을 제공한다.
+- **Service**: Because pods can be dynamically created and deleted, services are used to manage the network paths of pods. A service provides a single IP address and DNS name for a set of pods.
 
-- **디플로이먼트(Deployment)**: 애플리케이션의 상태를 원하는 방식으로 선언하는 구성이다. 쿠버네티스는 디플로이먼트를 사용해 파드를 관리하고, 필요에 따라 파드를 생성하거나 삭제한다.
+- **Deployment**: A configuration that declares the desired state of an application. Kubernetes uses deployments to manage pods, creating or deleting pods as needed.
 
-쿠버네티스를 사용하는 이유는 다음과 같다.
+The reasons for using Kubernetes are as follows.
 
-- **자동화된 배포 및 확장(Scaling)**: 애플리케이션을 자동으로 배포하고 확장할 수 있어 운영 부담이 줄어듭니다.
-- **자체 복구 (Self-healing)**: 문제가 발생한 컨테이너를 자동으로 재시작하거나, 특정 노드에 문제가 있을 때 다른 노드로 컨테이너를 이동시킵니다.
-- **확장성(Scalability)**: 많은 수의 컨테이너를 효과적으로 관리할 수 있어 대규모 애플리케이션 환경에서도 안정적인 운영이 가능하다.
-- **이식성(Portability)**: 다양한 클라우드 제공업체와 온프레미스 환경에서 동일한 방식으로 컨테이너를 관리할 수 있다.
+- **Automated deployment and scaling**: Applications can be deployed and scaled automatically, reducing the operational burden.
+- **Self-healing**: Automatically restarts containers that have problems, or moves containers to another node when a particular node has a problem.
+- **Scalability**: It can manage a large number of containers effectively, enabling stable operation even in large-scale application environments.
+- **Portability**: Containers can be managed the same way across various cloud providers and on-premises environments.
 
-간단히 말해, 쿠버네티스는 다수의 컨테이너를 효율적으로 관리하고 배포할 수 있게 해주는 강력한 도구이다. Docker가 개별 컨테이너를 실행하는 데 초점을 맞춘다면, 쿠버네티스는 이러한 컨테이너들이 대규모 환경에서 원활하게 동작하도록 오케스트레이션하는 데 중점을 둔다.
+Simply put, Kubernetes is a powerful tool that lets you efficiently manage and deploy many containers. If Docker focuses on running individual containers, Kubernetes focuses on orchestrating those containers so they work smoothly in large-scale environments.
 
-### ✅ Docker와 Kubernetes의 차이점
+### ✅ Differences between Docker and Kubernetes
 
-Docker와 Kubernetes는 모두 컨테이너와 관련된 기술이지만, 서로 다른 목적을 가지고 있으며, 서로를 보완하는 역할을 한다. Docker가 제공하는 기능만으로는 큰 규모의 애플리케이션을 안정적으로 운영하기에 부족할 수 있으며, 이때 Kubernetes를 추가적으로 사용하게 되면 다음과 같은 이점을 얻을 수 있다.
+Docker and Kubernetes are both container-related technologies, but they have different purposes and complement each other. The features Docker provides alone may not be enough to reliably operate a large-scale application, and using Kubernetes in addition gives you the following benefits.
 
-**1. 컨테이너 오케스트레이션:**
-- **Docker**: Docker는 개별 컨테이너를 생성, 실행, 관리할 수 있는 도구이다. 하지만 다수의 컨테이너를 관리하는 데는 한계가 있다.
-- **Kubernetes**: 수십 개에서 수천 개의 컨테이너를 효율적으로 배포, 확장, 관리할 수 있는 오케스트레이션 도구이다. Kubernetes는 애플리케이션의 복잡성을 관리하고, 다수의 컨테이너가 상호작용하며 동작할 수 있도록 도와준다.
+**1. Container orchestration:**
+- **Docker**: Docker is a tool for creating, running, and managing individual containers. But it has limits when it comes to managing many containers.
+- **Kubernetes**: An orchestration tool that can efficiently deploy, scale, and manage dozens to thousands of containers. Kubernetes manages the complexity of applications and helps many containers interact and work together.
 
-**2. 자동화:**
-- **Docker**: 컨테이너 실행은 수동으로 수행해야 하며, 장애가 발생하면 수동으로 복구해야 한다.
-- **Kubernetes**: 컨테이너의 배포, 업데이트, 복구 과정을 자동화한다. 문제가 발생한 컨테이너를 자동으로 재시작하거나, 특정 노드에 문제가 생기면 컨테이너를 다른 노드로 옮긴다.
+**2. Automation:**
+- **Docker**: Running containers has to be done manually, and if a failure occurs, recovery has to be done manually.
+- **Kubernetes**: Automates the process of deploying, updating, and recovering containers. It automatically restarts containers that have problems, or moves containers to another node if a particular node has a problem.
 
-**3. 스케일링(Scaling):**
-- **Docker**: 개별 컨테이너의 스케일링은 가능하지만, 여러 개의 컨테이너를 수동으로 확장하기에는 비효율적이다.
-- **Kubernetes**: 트래픽이나 부하에 따라 컨테이너를 자동으로 확장(스케일 업/다운)할 수 있다. 예를 들어, 갑작스러운 사용자 증가로 인해 서버 부하가 증가하면 Kubernetes가 자동으로 더 많은 컨테이너를 생성하여 부하를 분산시킨다. (Auto Scaling, Manual Scaling, Cluster Autoscaler)
+**3. Scaling:**
+- **Docker**: Scaling individual containers is possible, but scaling multiple containers manually is inefficient.
+- **Kubernetes**: Can automatically scale containers (scale up/down) according to traffic or load. For example, if server load increases due to a sudden surge in users, Kubernetes automatically creates more containers to distribute the load. (Auto Scaling, Manual Scaling, Cluster Autoscaler)
 
-**4. 셀프 힐링(Self-healing):**
-- **Docker**: 컨테이너가 실패하면 수동으로 대응해야 한다.
-- **Kubernetes**: 컨테이너가 실패하면 Kubernetes는 자동으로 다시 시작하거나, 필요한 경우 대체 컨테이너를 실행하여 시스템의 가용성을 유지한다. (헬스 체크를 위한 Liveness Probe, Readiness Probe)
+**4. Self-healing:**
+- **Docker**: If a container fails, you have to respond manually.
+- **Kubernetes**: If a container fails, Kubernetes automatically restarts it, or runs a replacement container if needed, to maintain system availability. (Liveness Probe, Readiness Probe for health checks)
 
-**5. 서비스 디스커버리 및 로드 밸런싱:**
-- **Docker**: 기본적으로 컨테이너 간의 네트워크 연결은 수동 설정이 필요하고, 로드 밸런싱도 직접 설정해야 한다.
-- **Kubernetes**: 서비스 디스커버리(컨테이너 간 자동 네트워크 연결)와 로드 밸런싱을 자동으로 관리합니다. 이로 인해 여러 컨테이너 간의 통신과 트래픽 분배가 효율적으로 이루어진다.
+**5. Service discovery and load balancing:**
+- **Docker**: By default, network connections between containers require manual setup, and load balancing also has to be configured yourself.
+- **Kubernetes**: Automatically manages service discovery (automatic network connections between containers) and load balancing. This makes communication and traffic distribution between multiple containers efficient.
 
-**6. 복잡한 애플리케이션 관리:**
-- **Docker**: 개별 컨테이너를 관리하는 데는 뛰어나지만, 복잡한 마이크로서비스 아키텍처를 관리하기엔 제한적이다.
-- **Kubernetes**: 여러 컨테이너로 구성된 복잡한 애플리케이션을 효과적으로 관리할 수 있으며, 이를 통해 마이크로서비스 아키텍처를 더 쉽게 구현하고 유지할 수 있다.
+**6. Managing complex applications:**
+- **Docker**: Excellent at managing individual containers, but limited for managing complex microservice architectures.
+- **Kubernetes**: Can effectively manage complex applications made up of multiple containers, making it easier to implement and maintain a microservice architecture.
 
-Docker는 컨테이너 기술의 핵심이며, 개별 애플리케이션을 컨테이너로 패키징하고 실행하는 데 강력하다. 하지만, 대규모의 복잡한 시스템에서 많은 컨테이너를 관리하고 자동화하는 데 있어서는 Kubernetes 같은 컨테이너 오케스트레이션 도구가 필수적이다. Kubernetes를 사용하면 운영의 복잡성을 줄이고, 더 높은 안정성, 가용성, 확장성을 가진 시스템을 구축할 수 있다.
+Docker is the core of container technology and is powerful for packaging and running individual applications as containers. However, for managing and automating many containers in large, complex systems, a container orchestration tool like Kubernetes is essential. With Kubernetes, you can reduce operational complexity and build systems with higher stability, availability, and scalability.
 
-## 🐳 사내 Docker Hub
+## 🐳 In-house Docker Hub
 
-애플리케이션을 클러스터의 컨테이너에 배포 및 테스트하고 운영하려면 도커 이미지가 필요하다.
+To deploy, test, and operate an application in a cluster's containers, you need a Docker image.
 
-이미지는 직접 만들어서 레포지토리에 등록해 사용할 수도 있고, 공개된 이미지를 가져올 수도 있다.
+You can build an image yourself and register it in a repository to use, or you can pull a public image.
 
-필자가 재직중인 사내에서 자체적으로 Docker Hub 서비스를 운영하고 있다. 해당 서비스는 이미지 레지스트리로서, 이미지 저장, 조직별 이미지에 대한 인증/권한 관리, 자동 빌드 및 배포 등을 지원한다.
+The company the author works at runs its own Docker Hub service internally. This service is an image registry that supports image storage, authentication/permission management for images per organization, automatic builds and deployment, and more.
 
-- 자동 빌드 : 특정 브랜치 / 태그의 깃헙 이벤트 발생시 자동 빌드
-- 사내 K8S 오케스트레이션 도구에서 Deploy: 특정 태그의 이미지가 푸쉬되었을 때, 설정된 yaml 파일 자동 배포
+- Automatic builds: automatically builds when a GitHub event occurs on a specific branch / tag
+- Deploy from the in-house K8S orchestration tool: when an image with a specific tag is pushed, automatically deploys the configured yaml file
 
-이를 활용하여 서비스의 도커 이미지를 빌드/배포 자동화를 할 수 있었다.
+Using this, we were able to automate building/deploying the service's Docker image.
 
-## 🚢 사내 Kubernetes Cluster Orchestration
+## 🚢 In-house Kubernetes Cluster Orchestration
 
-필자가 재직중인 사내에서는 쿠버네티스(kubernetes) 기반의 클러스터 오케스트레이션(Cluster Orchestration) 서비스를 운영하고있다.
+The company the author works at runs a Kubernetes-based Cluster Orchestration service internally.
 
-해당 서비스에서는 아래 3가지 노드를 생성할 수 있다.
-- **마스터 노드(Master node)**: 클러스터를 관리.
-- **워커 노드(Worker node)**: 파드가 실행.
-- **인그레스 노드(Ingress node)**: 클러스터 외부에서 클러스터 내의 파드에 접근할때 로드밸런서의 역할을 수행. 인그레스 컨트롤러로 NGINX를 사용.
+The service lets you create the 3 kinds of nodes below.
+- **Master node**: Manages the cluster.
+- **Worker node**: Where pods run.
+- **Ingress node**: Acts as a load balancer when accessing pods inside the cluster from outside the cluster. Uses NGINX as the ingress controller.
 
 
-## 빌드/배포 Flow
+## Build/Deploy Flow
 
-![인프라 도식도](/images/web_setting-infra_01.png)
+![Infrastructure diagram](/images/web_setting-infra_01.png)
 
-### 1. 자동 빌드 (with Docker Hub)
+### 1. Automatic builds (with Docker Hub)
 
-- Dockerfile: 애플리케이션의 환경과 실행 방법을 정의한 파일이다. Dockerfile을 기반으로 애플리케이션의 이미지를 빌드한다.
+- Dockerfile: A file that defines the application's environment and how to run it. The application's image is built based on the Dockerfile.
 
-- GitHub: 소스 코드가 관리되는 리포지토리로, 특정 브랜치나 태그에 변경이 발생할 때 이를 감지하여 자동으로 이미지를 빌드하도록 설정되어 있다.
+- GitHub: The repository where the source code is managed, set up to detect changes on specific branches or tags and automatically build the image.
 
-- Webhook: GitHub에서 특정 이벤트(예: 코드 푸시)가 발생할 때 Docker Hub에 알림을 보내 이미지를 빌드하도록 트리거한다.
+- Webhook: When a specific event (e.g. a code push) occurs on GitHub, it sends a notification to Docker Hub to trigger an image build.
 
-- Docker Hub: Dockerfile을 기반으로 이미지를 빌드하고, 이 이미지를 저장소에 저장한다. 이 저장된 이미지는 Kubernetes 클러스터에서 사용될 수 있다.
+- Docker Hub: Builds the image based on the Dockerfile and stores this image in the repository. This stored image can be used in the Kubernetes cluster.
 
-### 2. 자동 배포 (with K8S)
+### 2. Automatic deployment (with K8S)
 
-- **쿠버네티스 클러스터**: 클러스터 내의 여러 노드에서 컨테이너를 배포하고 실행하는 환경이다. 마스터 노드, 인그레스 노드, 워커 노드로 구성된다.
-    - **마스터 노드**: 클러스터를 관리하고 제어하는 역할을 담당한다. 실제 애플리케이션이 실행되지는 않으며, 클러스터의 상태를 관리한다.
-    - **인그레스 노드**: 외부 트래픽을 클러스터 내부로 라우팅하는 역할을 한다. 인그레스 컨트롤러를 통해 HTTP/HTTPS 요청을 적절한 서비스로 전달한다.
-    - **워커 노드**: 실제 애플리케이션 컨테이너(Pod)가 실행되는 노드이다. 배포된 애플리케이션은 여기서 실행됩니다.
+- **Kubernetes cluster**: An environment that deploys and runs containers on multiple nodes within the cluster. It consists of master nodes, ingress nodes, and worker nodes.
+    - **Master node**: Responsible for managing and controlling the cluster. Actual applications don't run here; it manages the state of the cluster.
+    - **Ingress node**: Routes external traffic into the cluster. It forwards HTTP/HTTPS requests to the appropriate service through the ingress controller.
+    - **Worker node**: The node where the actual application containers (Pods) run. Deployed applications run here.
 
-- **서비스 (Service)**:
-    - **Cluster IP**: 클러스터 내부에서 서비스에 고정된 IP 주소를 제공하여, 클러스터 내의 다른 파드들이 이 서비스에 접근할 수 있게 한다.
-    - **로드 밸런서 (VIP)**: 외부에서 서비스에 접근할 때 로드 밸런서를 통해 VIP(가상 IP)를 사용하여 트래픽을 분산한다.
+- **Service**:
+    - **Cluster IP**: Provides a fixed IP address for the service inside the cluster, so other pods in the cluster can access this service.
+    - **Load balancer (VIP)**: When accessing the service from outside, traffic is distributed via the load balancer using a VIP (virtual IP).
 
-- **Ingress**: HTTP/HTTPS 트래픽을 관리하고 적절한 서비스로 요청을 전달한다. 이 과정에서 ingress.yaml 파일이 사용되어 설정이 정의됩니다.
+- **Ingress**: Manages HTTP/HTTPS traffic and forwards requests to the appropriate service. In this process, the ingress.yaml file is used to define the configuration.
 
-- **Deployment**: prod.yaml 파일을 통해 애플리케이션의 배포 설정이 정의됩니다. 이 파일을 기반으로 파드(Pod)가 생성되고, 워커 노드에서 실행됩니다.
+- **Deployment**: The application's deployment configuration is defined through the prod.yaml file. Based on this file, Pods are created and run on worker nodes.
 
-### 3. 구성 파일들
+### 3. Configuration files
 
-- **prod.yaml**: 실제 프로덕션 환경에 배포할 때 사용되는 Kubernetes의 배포 설정 파일이다. 이 파일을 사용하여 원하는 파드 수, 컨테이너 이미지, 환경 변수 등을 정의한다.
+- **prod.yaml**: The Kubernetes deployment configuration file used when deploying to the actual production environment. This file is used to define the desired number of pods, container image, environment variables, and so on.
 
-- **service.yaml**: 서비스 설정 파일로, 서비스의 유형(예: ClusterIP, NodePort, LoadBalancer)과 해당 서비스가 제공하는 포트 및 관련 정보를 정의한다.
+- **service.yaml**: The service configuration file, which defines the service type (e.g. ClusterIP, NodePort, LoadBalancer) and the ports and related information the service provides.
 
-- **ingress.yaml**: 인그레스 리소스를 정의하는 파일로, 외부 트래픽을 내부 서비스로 라우팅하는 규칙을 설정한다.
+- **ingress.yaml**: A file that defines ingress resources, setting the rules for routing external traffic to internal services.
 
-- **ingress-node-vip.yaml**: VIP를 사용하여 특정 노드로 트래픽을 라우팅하는 설정을 정의하는 파일이다.
+- **ingress-node-vip.yaml**: A file that defines the configuration for routing traffic to specific nodes using a VIP.
 
-### 배포를 위한 yaml 설명
+### Explanation of the yaml for deployment
 
 **1. `deploy/prod.yaml`**
 
-클러스터에서 서버를 운영하는 방법을 명시한다. 이를 통해서 애플리케이션을 배포(클러스터의 워커노드 위에서 실행)할 수 있다.
+Specifies how to run the server in the cluster. Through this, you can deploy the application (run it on the cluster's worker nodes).
 
-- 실행시킬 컨테이너의 기반이되는 이미지의 경로,
-- 서버가 실행되는 워커노드의 파드를 관리하는 controler에 대한 명세,
-- 환경변수,
-- CPU나 메모리 자원에 대한 스펙
-- 컨테이너가 정상적으로 실행되고 있는지 확인할 기준 (readinessProbe, livenessProbe)
+- The path of the image the container to run is based on,
+- The spec for the controller that manages the pods on the worker nodes where the server runs,
+- Environment variables,
+- Specs for CPU and memory resources
+- Criteria for checking whether the container is running properly (readinessProbe, livenessProbe)
 
-아래의 명령어를 통해서 deployment를 클러스터에 생성할 수 있다.
+You can create the deployment in the cluster with the commands below.
 
 ```zsh
-# 클러스터에 템플릿 내용 적용
+# Apply the template contents to the cluster
 kubectl apply -f prod.yaml
 
-# 파드 생성 내역을 확인
+# Check the pod creation history
 kubectl get deploy,rs,pod --show-labels
 
-# 파드의 특정 로그에 접속
+# Connect to a specific pod's logs
 kubectl logs -f {파드 이름}
 ```
 
 **2. `deploy/service.yaml`**
 
-서비스(컨트롤러)에 대한 스펙을 명시한다.
+Specifies the spec for the service (controller).
 
-- **서비스**: 고정된 단일 엔드포인트를 제공해주는 역할. 마스터 노드의 컨트롤러에 해당됨. (한 워커 노드 안에서만 유효)
-- **파드**: 워커노드 내에서 실제 아스트로 서버가 실행되는 곳을 파드라고함. 파드들은 새로 생성되고 삭제되고를 반복하기 때문에 IP가 계속 바뀜. 때문에 고정된 IP를 설정하기 위해서는 서비스를 사용해야함. 아스트로 서버가 실행중인 파드에 접근하고 싶다면 고정된 IP(클러스터 IP) 를 통해서 접근 가능. (단, 클러스터 내부에서 한 워커 노드 안에서만 서비스가 요청을 분배해줌.)
+- **Service**: Provides a single fixed endpoint. Corresponds to the controller on the master node. (Only valid within one worker node)
+- **Pod**: The place where the actual Astro server runs within a worker node is called a pod. Because pods keep getting created and deleted, their IPs keep changing. So to set a fixed IP, you need to use a service. If you want to access a pod running the Astro server, you can access it via the fixed IP (cluster IP). (However, within the cluster, the service only distributes requests within one worker node.)
 
-아래와 같이 kubectl(클러스터의 마스터노드에서 워커노드의 파드들을 관리하는 API를 제공하는 CLI)를 통해서 서비스를 클러스터에 생성할 수 있다.
+You can create the service in the cluster through kubectl (a CLI that provides an API for managing worker nodes' pods from the cluster's master node), as below.
 
 ```zsh
-# 클러스터에 템플릿 내용 적용
+# Apply the template contents to the cluster
 kubectl apply -f service.yaml
 
-# 생성된 서비스를 확인한다.
+# Check the created service.
 kubectl get service
 
-# 레이블을 기준으로 자원을 조회한다.
+# Look up resources by label.
 kubectl get all -l app={앱 이름}
 ```
 
 **3. `deploy/ingress.yaml`**
 
-인그레스에 대한 스펙 명시
+Specifies the spec for the ingress
 
-- **인그레스**: 클러스터 외부에서 클러스터 내부로 접근하는 요청을 어떻게 처리할지를 정의한 규칙 모음.
-- **인그레스 컨트롤러**: 인그레스를 실제로 동작시키는 노드
+- **Ingress**: A set of rules defining how to handle requests coming from outside the cluster into the cluster.
+- **Ingress controller**: The node that actually makes the ingress work
 
-클러스터 외부에서 아스트로 서버에 접근하기 위해서는 위에서 설정한 서비스만으론 불가능하다.
-서비스는 클러스터 외부로 노출된게 아니기 때문에 외부에서 접근할 수 없다.
-때문에 인그레스 노드가 서비스와 연결되어 외부에서 내부의 워커노드의 파드에 접근할 수 있게 도와준다.
+To access the Astro server from outside the cluster, the service set up above alone isn't enough.
+Since the service isn't exposed outside the cluster, it can't be accessed from outside.
+So the ingress node connects to the service and helps external traffic reach the pods on the internal worker nodes.
 
-사내 쿠버네티스 오케스트레이션 서비스에서는 nginx 기반의 ingress-nginx 컨트롤러를 사용중이기 때문에 ingress-nginx 컨트롤러는 ingress.yaml에 정의한 인그레스를 nginx 환경 설정으로 변경해서 적용된다.
+Since the in-house Kubernetes orchestration service uses the nginx-based ingress-nginx controller, the ingress-nginx controller converts the ingress defined in ingress.yaml into nginx configuration and applies it.
 
-아래 명령어로 인그레스를 클러스터에 생성할 수 있다.
+You can create the ingress in the cluster with the commands below.
 
 ```zsh
-# 클러스터에 템플릿 내용 적용
+# Apply the template contents to the cluster
 kubectl apply -f ingress.yaml
 
-# 생성된 인그레스 확인
-# Address에 있는 ip를 통해 브라우저에서 직접 접근 가능
+# Check the created ingress
+# You can access it directly from the browser via the ip in Address
 kubectl get ingress
 ```
 
 **4. `deploy/ingress-node-vip.yaml`**
 
-인그레스 노드에 로드밸런서 VIP 연결
+Connects a load balancer VIP to the ingress nodes
 
-- 로드밸런서: 대규모 실 서비스의 트래픽 제어, 가용성 확보와 성능 향상을 돕는다.
-- 실제 서비스에서는 수십대의 인그레스 노드가 있기 때문에 이를 로드밸런서로 묶어서 서비스한다.
+- Load balancer: Helps control traffic, ensure availability, and improve performance for large-scale real services.
+- In real services there are dozens of ingress nodes, so they're grouped under a load balancer to serve traffic.
 
-인그레스 노드를 묶는 로드밸런서 VIP를 생성해서 서비스 인프라를 완성할 수 있다.
+You can complete the service infrastructure by creating a load balancer VIP that groups the ingress nodes.
 
 ```zsh
-# 로드밸런서 서비스를 생성
+# Create the load balancer service
 kubectl apply -f ingress-node-vip.yaml
 
-# 네임스페이스가 ingress-nginx인 서비스를 조회함.
-# 최종적으로는 여기서 조회되는 External IP 로 외부에서 접근 가능하다.
+# Look up services whose namespace is ingress-nginx.
+# Ultimately, it can be accessed from outside via the External IP shown here.
 kubectl get -n ingress-nginx service
 ```
 
-## 도메인 연결
+## Connecting a domain
 
-사내에서 자체 도메인 리소스를 생성할 수 있는 서비스를 사용하여 도메인을 생성했다.
+We created a domain using an in-house service that lets you create your own domain resources.
 
-- 레코드 타입: A (도메인에 IPv4 주소를 연결하는 방식)
-- 레코드 값: 로드밸런서 VIP 를 연결하여 얻은 외부 IP(External IP)
+- Record type: A (a way of connecting an IPv4 address to a domain)
+- Record value: The External IP obtained by connecting the load balancer VIP
 

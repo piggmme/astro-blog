@@ -47,11 +47,11 @@ With AI as a development tool, I can **take a product from planning to launch on
   - **Astro Migration (2024.07 ~ Present, co-lead developer on a 2-person team)**
     - Introduced the `Astro` (SSR) framework to turn a large, hard-to-maintain React project into one that can be updated incrementally ([Blog Post](/en/posts/FrontEnd/astrojs))
     - Extended the Astro server into a production-ready Node server with `Sentry` error tracking
-    - Removed the complex `Redux` · `RxJS` state layer and migrated to `Nanostore` ([Blog Post 1](/en/posts/react/redux-to-nanostore), [Blog Post 2 (Korean)](/ko/posts/react/remove-transformer))
+    - Removed the complex `Redux` · `RxJS` state layer and migrated to `Nanostore` ([Blog Post 1](/en/posts/react/redux-to-nanostore), [Blog Post 2](/en/posts/react/remove-transformer))
     - Migrated from costly `Web Socket` (Phoenix) to `SSE` ([Blog Post](/en/posts/web/sse))
     - Built a deployment and operation environment for the Astro server with `Docker` and `k8s`, later moving CI/CD to `GitHub Actions` image builds ([Blog Post](/en/posts/web/setting-infra))
     - Conducted load testing with `k6` to allocate infrastructure resources efficiently ([Blog Post](/en/posts/FrontEnd/tps-k6))
-    - Built a development environment where AI works by the team's rules, using `Claude Code` sub-agents, skills, and rule documents ([Blog Post (Korean)](/ko/posts/AI/web-astro-ai-setup))
+    - Built a development environment where AI works by the team's rules, using `Claude Code` sub-agents, skills, and rule documents ([Blog Post](/en/posts/AI/web-astro-ai-setup))
   - **Features Built on the Modernized Foundation**
     - **Post & comment drafts**: Auto-save and restore for every writing form, with automatic retry of failed saves when coming back online (introduced `TanStack Query`)
     - **Received-requests Kanban board**: List / Kanban view toggle, with optimistic updates that move cards on screen before the server responds
@@ -138,7 +138,7 @@ With AI as a development tool, I can **take a product from planning to launch on
 ### 2. State Management & Structural Refactoring
 
 > - [Moving Away from Complex Redux](/en/posts/react/redux-to-nanostore)
-> - [Removing the Transformer Layer (Korean)](/ko/posts/react/remove-transformer)
+> - [Removing the Transformer Layer](/en/posts/react/remove-transformer)
 
 - Recognized the difficulty in tracking state changes when **asynchronous logic was heavily concentrated in Redux middleware**.
 - Performed an **incremental migration from large-scale Redux global state to Nano Store**.
@@ -176,7 +176,7 @@ With AI as a development tool, I can **take a product from planning to launch on
 
 ### 5. AI Development Environment
 
-> [Making AI Agents Work by the Team's Rules (Korean)](/ko/posts/AI/web-astro-ai-setup)
+> [Making AI Agents Work by the Team's Rules](/en/posts/AI/web-astro-ai-setup)
 
 - Reduced `CLAUDE.md` to a table of contents and split detailed rules into separate documents, designing a structure where **the main session only orchestrates and sub-agents handle repetitive work**.
 - Wrote **role-specific sub-agents and skills**, such as an agent that diagnoses bugs and fixes them only after approval, and an i18n agent that updates all four locales at once.

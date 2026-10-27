@@ -1,7 +1,7 @@
 ---
 title: 'JavaScrip Proxy Object'
 pubDate: 2023-10-25
-description: '자바스크립트의 Proxy 객체에 대해 알아보자.'
+description: "Let's learn about JavaScript's Proxy object."
 author: 'dev_hee'
 image:
     url: 'https://velog.velcdn.com/images/heelieben/post/3bd9a022-a82c-4df7-ad40-7a1430d43288/image.jpg'
@@ -10,25 +10,25 @@ tags: ["JavaScript"]
 
 ---
 
-> 본 글은 Chat GPT가 답변한 내용을 바탕으로 작성된 글입니다. 내용이 오래되거나 오류가 있을 수 있습니다.
+> This post was written based on answers from Chat GPT. The content may be outdated or contain errors.
 
-## 📌 Proxy 객체는 무엇일까?
+## 📌 What is a Proxy object?
 
-JavaScript에서의 Proxy 객체는 다른 객체를 감싸서 그 객체에 대한 접근을 제어하고, 사용자가 정의한 동작을 수행할 수 있게 해주는 객체입니다. 이것은 메타프로그래밍이라는 프로그래밍 패러다임을 지원합니다. 메타프로그래밍은 프로그램이 자기 자신을 조사하고 수정할 수 있는 능력을 가리킵니다.
+In JavaScript, a Proxy object is an object that wraps another object, controls access to that object, and lets you perform user-defined behavior. It supports a programming paradigm called metaprogramming. Metaprogramming refers to the ability of a program to inspect and modify itself.
 
-Proxy 객체는 다음과 같은 상황에서 사용됩니다:
+Proxy objects are used in situations like the following:
 
-1. **프로퍼티 접근 제어**: Proxy를 사용하여 객체의 특정 프로퍼티에 접근하는 것을 가로챌 수 있습니다. 이를 이용해 읽기, 쓰기, 삭제 등의 동작을 변경할 수 있습니다.
+1. **Controlling property access**: Using a Proxy, you can intercept access to specific properties of an object. With this, you can change behaviors such as reading, writing, and deleting.
 
-2. **함수 호출 제어**: Proxy를 사용하여 함수 호출을 가로쳐서 함수 호출 전후에 특정 동작을 수행할 수 있습니다.
+2. **Controlling function calls**: Using a Proxy, you can intercept function calls and perform specific behavior before and after the function call.
 
-3. **Object 확장 (Extensibility) 제어**: Proxy를 사용하여 객체의 확장 가능성(Extensible)을 제어할 수 있습니다.
+3. **Controlling Object Extensibility**: Using a Proxy, you can control the extensibility (Extensible) of an object.
 
-4. **배열에 대한 접근 제어**: Proxy를 사용하여 배열의 동작을 수정하거나 변경할 수 있습니다.
+4. **Controlling access to arrays**: Using a Proxy, you can modify or change the behavior of arrays.
 
-예를 들어, 객체에 대한 접근을 가로채서 특정 조건에 따라 동작을 수정하거나, 특정 프로퍼티에 대한 접근을 제한하는 등의 작업을 할 수 있습니다.
+For example, you can intercept access to an object and modify behavior based on specific conditions, or restrict access to specific properties.
 
-다음은 간단한 Proxy 예제입니다:
+Here's a simple Proxy example:
 
 ```javascript
 let target = {
@@ -54,11 +54,11 @@ proxy.value = 50; // "Setting property "value" to 50"
 console.log(target.value); // 50
 ```
 
-위 코드에서 `handler` 객체는 Proxy가 호출될 때 어떤 동작을 할지 정의합니다. 이 경우에는 `get` 메서드와 `set` 메서드를 정의하여, 프로퍼티의 값을 읽을 때와 쓸 때의 동작을 변경하고 있습니다.
+In the code above, the `handler` object defines what behavior to perform when the Proxy is invoked. In this case, it defines a `get` method and a `set` method, changing the behavior when reading and writing property values.
 
-### 프로퍼티 접근 제어
+### Controlling property access
 
-Proxy를 사용하여 객체의 프로퍼티 접근을 제어하는 예제를 제공하겠습니다.
+I'll provide an example of using a Proxy to control property access on an object.
 
 ```javascript
 let target = {
@@ -69,7 +69,7 @@ let target = {
 let handler = {
   get: function(target, prop) {
     if (prop === 'age') {
-      return target[prop] - 5; // 나이를 5세 줄입니다.
+      return target[prop] - 5; // Reduce the age by 5 years.
     } else {
       return target[prop];
     }
@@ -82,15 +82,15 @@ console.log(proxy.name); // "John"
 console.log(proxy.age); // 25
 ```
 
-위 예제에서 `handler` 객체에 `get` 메소드를 정의하여 프로퍼티 접근을 제어합니다. 만약 프로퍼티가 'age'인 경우, 실제 값에서 5를 뺀 값을 반환하도록 합니다.
+In the example above, a `get` method is defined on the `handler` object to control property access. If the property is 'age', it returns the actual value minus 5.
 
-따라서 `proxy.name`은 원래 값인 "John"을 반환하지만, `proxy.age`는 원래 값인 30에서 5를 뺀 25를 반환합니다.
+So `proxy.name` returns the original value "John", but `proxy.age` returns 25, which is the original value 30 minus 5.
 
-이것은 간단한 예제일 뿐이며, 실제로는 프로퍼티에 접근할 때 다양한 동작을 수행할 수 있습니다. 예를 들어 특정 프로퍼티에 대한 접근을 제한하거나, 접근 로그를 남기거나, 프로퍼티 값을 변조하는 등의 작업을 할 수 있습니다.
+This is just a simple example; in practice, you can perform a variety of behaviors when a property is accessed. For example, you can restrict access to specific properties, log access, or tamper with property values.
 
-### 함수 호출 제어
+### Controlling function calls
 
-Proxy를 사용하여 함수 호출을 제어하는 예제를 제공하겠습니다.
+I'll provide an example of using a Proxy to control function calls.
 
 ```javascript
 function add(x, y) {
@@ -106,59 +106,59 @@ let handler = {
 
 let proxyAdd = new Proxy(add, handler);
 
-console.log(proxyAdd(2, 3)); // 함수 호출: 2,3, 결과: 5
+console.log(proxyAdd(2, 3)); // Function call: 2,3, result: 5
 ```
 
-위 예제에서는 `handler` 객체에 `apply` 메소드를 정의하여 함수 호출을 제어합니다. 
+In the example above, an `apply` method is defined on the `handler` object to control function calls. 
 
-- `apply` 메소드는 함수가 호출될 때 실행되며, 함수의 인자와 함께 호출되는 함수 객체와 this 값이 전달됩니다.
-- 이 예제에서는 호출되는 함수에 대한 로그를 출력하고, 원래 함수를 호출합니다.
+- The `apply` method runs when the function is called, and it receives the function object being called and the this value, along with the function's arguments.
+- In this example, it logs the function being called and then calls the original function.
 
-따라서 `proxyAdd`를 통해 `add` 함수를 호출하면 함수 호출이 로그로 남고 원래 함수가 실행됩니다.
+So when you call the `add` function through `proxyAdd`, the function call is logged and the original function is executed.
 
-이러한 방식으로 Proxy를 활용하면 함수 호출 전후에 원하는 동작을 수행할 수 있습니다.
+By using Proxy this way, you can perform the behavior you want before and after a function call.
 
-### Object 확장 (Extensibility) 제어
+### Controlling Object Extensibility
 
-객체의 확장 가능성(Extensibility)은 해당 객체에 새로운 프로퍼티를 추가할 수 있는지 여부를 나타내는 속성입니다.
+An object's extensibility (Extensibility) is an attribute that indicates whether new properties can be added to that object.
 
-JavaScript에서 기본적으로 객체는 확장 가능합니다. 이는 객체에 새로운 프로퍼티를 언제든지 추가할 수 있다는 것을 의미합니다. 예를 들어:
+In JavaScript, objects are extensible by default. This means you can add new properties to an object at any time. For example:
 
 ```javascript
 let myObject = {};
 myObject.newProperty = '새로운 값';
 ```
 
-위 코드에서 `myObject`는 빈 객체에서 시작하여 `newProperty`라는 새로운 프로퍼티를 추가했습니다. 이것이 객체의 확장 가능성입니다.
+In the code above, `myObject` starts as an empty object and a new property called `newProperty` is added. This is an object's extensibility.
 
-하지만 때로는 객체의 구조를 더욱 견고하게 만들어야 할 필요가 있습니다. 예를 들어, 특정 객체에 대해 더 이상의 프로퍼티 추가를 허용하지 않고 싶을 수 있습니다. 이런 경우 객체의 확장 가능성을 막는 것이 유용합니다.
+But sometimes you need to make an object's structure more robust. For example, you might not want to allow any more properties to be added to a specific object. In such cases, preventing the object's extensibility is useful.
 
-예를 들어, 다음과 같이 확장 가능성을 막을 수 있습니다:
+For example, you can prevent extensibility like this:
 
 ```javascript
 let myObject = {};
 Object.preventExtensions(myObject);
 
-myObject.newProperty = '새로운 값'; // 에러 발생
+myObject.newProperty = '새로운 값'; // Throws an error
 ```
 
-위 코드에서 `Object.preventExtensions()`를 사용하여 `myObject`의 확장 가능성을 막았습니다. 따라서 이제 새로운 프로퍼티를 추가할 수 없습니다.
+In the code above, `Object.preventExtensions()` is used to prevent `myObject`'s extensibility. So now new properties can't be added.
 
-확장 가능성을 막는 이유는 다음과 같습니다:
+The reasons for preventing extensibility are as follows:
 
-1. **구조의 안정성**: 특정 객체가 특정한 형태나 구조를 가져야 하는 경우, 더 이상의 프로퍼티 추가를 방지하여 객체의 안정성을 유지할 수 있습니다.
+1. **Structural stability**: When a specific object must have a specific shape or structure, you can maintain the object's stability by preventing further properties from being added.
 
-2. **보안**: 중요한 데이터나 함수를 담고 있는 객체의 구조를 고정시켜서 외부에서의 무단 접근을 막을 수 있습니다.
+2. **Security**: By fixing the structure of an object that holds important data or functions, you can block unauthorized access from outside.
 
-3. **디버깅**: 객체의 구조를 고정시켜서 예기치 않은 프로퍼티 추가로 인한 버그를 방지할 수 있습니다.
+3. **Debugging**: By fixing the object's structure, you can prevent bugs caused by unexpected property additions.
 
-4. **의도한 사용범위 설정**: 특정 객체가 특정한 목적을 위해 사용되는 경우, 그 목적 이외의 프로퍼티가 추가되는 것을 방지할 수 있습니다.
+4. **Setting the intended scope of use**: When a specific object is used for a specific purpose, you can prevent properties outside that purpose from being added.
 
-요약적으로, 객체의 확장 가능성을 막는 것은 프로그램의 안정성과 예측 가능성을 높이는데 도움을 줍니다.
+In summary, preventing an object's extensibility helps increase a program's stability and predictability.
 
-### 배열에 대한 접근 제어
+### Controlling access to arrays
 
-Proxy를 사용하여 배열에 대한 접근을 제어하는 예제를 제공하겠습니다.
+I'll provide an example of using a Proxy to control access to an array.
 
 ```javascript
 let targetArray = [1, 2, 3];
@@ -190,26 +190,26 @@ let proxyArray = new Proxy(targetArray, handler);
 console.log(proxyArray[0]); // 1
 console.log(proxyArray[1]); // 2
 
-proxyArray[1] = 5; // 프로퍼티 값 수정
+proxyArray[1] = 5; // Modify property value
 console.log(proxyArray); // [1, 5, 3]
 
-proxyArray[3] = 4; // 오류: 잘못된 인덱스
+proxyArray[3] = 4; // Error: invalid index
 ```
 
-위 예제에서는 배열에 대한 접근을 제어하기 위해 `handler` 객체에 `get`과 `set` 메소드를 정의합니다.
+In the example above, `get` and `set` methods are defined on the `handler` object to control access to the array.
 
-- `get` 메소드에서는 배열의 길이를 확인하고, 유효한 인덱스에 대해서만 값을 반환합니다.
-- `set` 메소드에서는 유효한 인덱스에 대해서만 값을 설정하도록 합니다.
+- The `get` method checks the array's length and returns values only for valid indexes.
+- The `set` method only sets values for valid indexes.
 
-따라서 `proxyArray`를 통해 배열 요소에 접근할 때 유효하지 않은 인덱스를 사용하면 오류가 발생합니다.
+So when you access array elements through `proxyArray` using an invalid index, an error occurs.
 
-이러한 방식으로 Proxy를 활용하면 배열에 대한 접근을 제어하고 원하는 동작을 정의할 수 있습니다.
+By using Proxy this way, you can control access to arrays and define the behavior you want.
 
-## 📌 Proxy를 사용한 다양한 예시
+## 📌 Various examples using Proxy
 
-Proxy는 다양한 상황에서 유용하게 사용될 수 있습니다. 아래에 몇 가지 사용 예시를 제공합니다:
+Proxy can be useful in a variety of situations. Here are a few usage examples:
 
-1. **Validation (유효성 검사)**:
+1. **Validation**:
    ```javascript
    let validator = {
      set: function(target, prop, value) {
@@ -223,11 +223,11 @@ Proxy는 다양한 상황에서 유용하게 사용될 수 있습니다. 아래�
    };
 
    let person = new Proxy({}, validator);
-   person.age = 30; // 동작
-   person.age = '삼십'; // 오류: 나이는 정수여야 합니다.
+   person.age = 30; // Works
+   person.age = '삼십'; // Error: age must be an integer.
    ```
 
-2. **Logging (로그 기록)**:
+2. **Logging**:
    ```javascript
    let loggingHandler = {
      get: function(target, prop) {
@@ -242,11 +242,11 @@ Proxy는 다양한 상황에서 유용하게 사용될 수 있습니다. 아래�
 
    let data = { count: 0 };
    let proxiedData = new Proxy(data, loggingHandler);
-   proxiedData.count = 5; // 설정 중: count = 5
-   console.log(proxiedData.count); // 읽는 중: count
+   proxiedData.count = 5; // Setting: count = 5
+   console.log(proxiedData.count); // Reading: count
    ```
 
-3. **캐싱 (Caching)**:
+3. **Caching**:
    ```javascript
    let fibonacci = new Proxy({}, {
      get: function(target, n) {
@@ -261,10 +261,10 @@ Proxy는 다양한 상황에서 유용하게 사용될 수 있습니다. 아래�
      }
    });
 
-   console.log(fibonacci[5]); // 5 (계산된 후에 캐싱됨)
+   console.log(fibonacci[5]); // 5 (cached after being computed)
    ```
 
-4. **액세스 제어 (Access Control)**:
+4. **Access Control**:
    ```javascript
    let accessControl = {
      get: function(target, prop, receiver) {
@@ -276,34 +276,34 @@ Proxy는 다양한 상황에서 유용하게 사용될 수 있습니다. 아래�
    };
 
    let securedData = new Proxy({ _private: '비밀 정보' }, accessControl);
-   console.log(securedData._private); // 오류: 허용되지 않은 접근: _private
+   console.log(securedData._private); // Error: unauthorized access: _private
    ```
 
-5. **얕은 복사 (Shallow Cloning)**:
+5. **Shallow Cloning**:
    ```javascript
    let original = { a: 1, b: 2 };
    let copy = new Proxy(original, {
      set: function(target, prop, value) {
        target[prop] = value;
-       return true; // 항상 true를 반환하여 할당이 성공했음을 나타냄
+       return true; // Always return true to indicate the assignment succeeded
      }
    });
 
-   copy.c = 3; // 복사본에 새로운 프로퍼티를 추가
-   console.log(original.c); // 3 (원본 객체도 업데이트 됨)
+   copy.c = 3; // Add a new property to the copy
+   console.log(original.c); // 3 (the original object is updated too)
    ```
 
-이러한 예시들은 Proxy의 다양한 활용을 보여줍니다. Proxy는 객체의 동작을 가로채고 수정할 수 있어서, 상황에 따라서는 강력한 도구로 활용될 수 있습니다.
+These examples show the various uses of Proxy. Since Proxy can intercept and modify an object's behavior, it can be used as a powerful tool depending on the situation.
 
 ### Reflect
 
-`Reflect`는 JavaScript에서 동작을 수행하는 메타 프로그래밍을 위한 내장 객체입니다. `Reflect` 객체의 메소드들은 기본적으로 기존에 존재하던 몇 가지 작업을 간결하게 표현하고 에러 처리를 개선하기 위한 목적으로 도입되었습니다.
+`Reflect` is a built-in object in JavaScript for metaprogramming that performs operations. The methods of the `Reflect` object were introduced mainly to express some previously existing operations concisely and to improve error handling.
 
-`Reflect` 객체는 명령형 작업(Imperative Operations)을 함수 호출로 대체하고, 에러 발생 시 예외를 던지는 대신 `false`나 `undefined`와 같은 값을 반환하여 더욱 명확한 제어 흐름을 가능하게 합니다.
+The `Reflect` object replaces imperative operations (Imperative Operations) with function calls, and when an error occurs, instead of throwing an exception, it returns values like `false` or `undefined`, enabling clearer control flow.
 
-예를 들어, 객체에 대한 프로퍼티 읽기(`get`), 프로퍼티 쓰기(`set`), 함수 호출(`apply`) 등의 작업을 `Reflect`를 사용하여 수행할 수 있습니다.
+For example, you can use `Reflect` to perform operations on an object such as reading a property (`get`), writing a property (`set`), and calling a function (`apply`).
 
-예시:
+Example:
 
 ```javascript
 let target = {
@@ -323,17 +323,17 @@ let proxy = new Proxy(target, handler);
 console.log(proxy.name); // "Getting property "name", "John"
 ```
 
-위 예제에서 `Reflect.get()` 메소드는 `target` 객체의 프로퍼티를 읽습니다. 이것은 `target[prop]`와 동일한 동작을 합니다.
+In the example above, the `Reflect.get()` method reads a property of the `target` object. This does the same thing as `target[prop]`.
 
-`Reflect`를 사용하면 Proxy 핸들러 내에서 기본 동작을 호출할 수 있어, 프로퍼티 접근이나 함수 호출을 가로채고 원하는 동작을 추가할 수 있습니다.
+Using `Reflect` lets you call the default behavior inside a Proxy handler, so you can intercept property access or function calls and add the behavior you want.
 
-단순히 말해서 `Reflect`는 Proxy와 함께 사용되어 기본 동작을 호출하는 데 사용됩니다.
+Simply put, `Reflect` is used together with Proxy to call the default behavior.
 
-## 📌 Vue의 Reactivity와 Proxy
+## 📌 Vue's Reactivity and Proxy
 
-Vue.js에서 데이터를 Proxy로 관리하는 것은 기본적으로 Vue의 반응성(Reactivity) 시스템을 활용하는 것입니다. Vue는 기본적으로 JavaScript의 `Object.defineProperty`나 ES6의 `Proxy`를 사용하여 데이터를 감시하고 업데이트합니다.
+Managing data with Proxy in Vue.js is basically making use of Vue's reactivity (Reactivity) system. Vue basically uses JavaScript's `Object.defineProperty` or ES6's `Proxy` to watch and update data.
 
-아래에 간단한 예시를 제공합니다:
+Here's a simple example:
 
 ```html
 <!DOCTYPE html>
@@ -367,27 +367,27 @@ Vue.js에서 데이터를 Proxy로 관리하는 것은 기본적으로 Vue의 �
 </html>
 ```
 
-이 예제에서 `new Vue({...})`로 Vue 인스턴스를 생성하고, `data()` 메소드에서 `message` 프로퍼티를 반환합니다. 이 프로퍼티는 Vue에 의해 감시되어 변경될 때 화면이 자동으로 업데이트됩니다.
+In this example, a Vue instance is created with `new Vue({...})`, and the `data()` method returns a `message` property. This property is watched by Vue, and when it changes, the screen is updated automatically.
 
-위 코드에서 `data()` 메소드에서 반환된 객체가 Proxy로 감싸지며, 이를 통해 Vue는 데이터의 변화를 감지하고 화면을 업데이트합니다.
+In the code above, the object returned from the `data()` method is wrapped in a Proxy, and through this Vue detects changes to the data and updates the screen.
 
-이와 같은 방식으로 Vue는 내부적으로 데이터를 Proxy로 다루어 반응성을 구현하고 있습니다. Vue의 반응성 시스템은 데이터의 변화를 감지하고 이에 따라 UI를 업데이트하는 핵심 메커니즘입니다.
+In this way, Vue internally handles data with Proxy to implement reactivity. Vue's reactivity system is the core mechanism that detects changes in data and updates the UI accordingly.
 
-## 📌 Proxy를 사용해 양방향 바인딩 구현하기
+## 📌 Implementing two-way binding with Proxy
 
 !codepen[kheeyaa/embed/PoVqWbg?default-tab=js%2Cresult]
 
-순수 자바스크립트로 양방향 데이터 바인딩을 구현한 예제입니다. 폼 데이터 객체 `formData`를 생성하고 이를 Proxy로 감싸어 데이터 변경을 감지하며 화면을 업데이트합니다. `set` 메소드에서 폼 데이터가 변경될 때마다 화면을 업데이트하도록 설정하였습니다.
+This is an example of implementing two-way data binding in plain JavaScript. It creates a form data object `formData` and wraps it in a Proxy to detect data changes and update the screen. The `set` method is set up to update the screen whenever the form data changes.
 
 
-## 📌 실제 Proxy가 사용된 라이브러리 예제
+## 📌 Examples of libraries that actually use Proxy
 
-실제 라이브러리에서 Proxy를 사용하는 많은 예시가 있습니다. 이를 통해 라이브러리는 객체나 데이터에 접근하거나 조작할 때 추가적인 동작을 수행할 수 있습니다. 여기에는 몇 가지 대표적인 라이브러리들과 그들이 Proxy를 사용하는 예시를 소개합니다:
+There are many examples of real libraries using Proxy. Through it, libraries can perform additional behavior when accessing or manipulating objects or data. Here are a few representative libraries and examples of how they use Proxy:
 
-1. **Vue.js (반응성 시스템)**:
-   Vue.js는 자체적인 반응성 시스템을 구축하기 위해 Proxy를 사용합니다. 이를 통해 Vue는 데이터의 변경을 감지하고 자동으로 UI를 업데이트합니다.
+1. **Vue.js (reactivity system)**:
+   Vue.js uses Proxy to build its own reactivity system. Through this, Vue detects data changes and automatically updates the UI.
 
-   예시:
+   Example:
    ```javascript
    let reactiveData = { count: 0 };
    let proxy = new Proxy(reactiveData, {
@@ -396,13 +396,13 @@ Vue.js에서 데이터를 Proxy로 관리하는 것은 기본적으로 Vue의 �
        target[prop] = value;
      }
    });
-   proxy.count = 5; // 프로퍼티 "count"가 변경되었습니다.
+   proxy.count = 5; // Property "count" has changed.
    ```
 
 2. **MobX**:
-   MobX는 상태 관리 라이브러리로, Observable 데이터를 사용하여 상태 변경을 추적하고 필요한 곳에서 자동으로 업데이트됩니다. 이를 위해 Proxy를 활용합니다.
+   MobX is a state management library that uses Observable data to track state changes and automatically update wherever needed. It uses Proxy for this.
 
-   예시:
+   Example:
    ```javascript
    import { observable } from 'mobx';
 
@@ -411,13 +411,13 @@ Vue.js에서 데이터를 Proxy로 관리하는 것은 기본적으로 Vue의 �
      age: 30
    });
 
-   user.name = 'Jane'; // MobX는 변경을 감지하고 자동으로 업데이트합니다.
+   user.name = 'Jane'; // MobX detects the change and updates automatically.
    ```
 
 3. **Redux Toolkit (immer)**:
-   Redux Toolkit은 Redux를 더욱 간편하게 사용할 수 있게 만든 라이브러리입니다. Immer 라이브러리는 불변성을 유지하면서도 쉽게 상태를 업데이트할 수 있도록 Proxy를 사용합니다.
+   Redux Toolkit is a library that makes Redux easier to use. The Immer library uses Proxy so you can easily update state while maintaining immutability.
 
-   예시:
+   Example:
    ```javascript
    import produce from 'immer';
 
@@ -431,9 +431,9 @@ Vue.js에서 데이터를 Proxy로 관리하는 것은 기본적으로 Vue의 �
    ```
 
 4. **MobX-State-Tree**:
-   MobX-State-Tree은 MobX를 사용한 상태 관리 라이브러리로, 복잡한 애플리케이션의 상태를 효과적으로 관리합니다. 내부적으로 Proxy를 활용하여 상태를 추적하고 업데이트합니다.
+   MobX-State-Tree is a state management library using MobX that effectively manages the state of complex applications. Internally, it uses Proxy to track and update state.
 
-   예시:
+   Example:
    ```javascript
    import { types } from 'mobx-state-tree';
 
@@ -450,4 +450,4 @@ Vue.js에서 데이터를 Proxy로 관리하는 것은 기본적으로 Vue의 �
    store.todos.push({ text: 'Learn Proxy' });
    ```
 
-이러한 라이브러리들은 Proxy를 사용하여 데이터의 상태를 관리하고 업데이트하는데에 활용합니다. 이를 통해 개발자는 데이터의 변경을 더욱 편리하게 다룰 수 있습니다.
+These libraries use Proxy to manage and update the state of data. Through this, developers can handle data changes more conveniently.

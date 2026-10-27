@@ -1,7 +1,7 @@
 ---
-title: 'E2E 테스트 : Playwright'
+title: 'E2E Testing : Playwright'
 pubDate: 2023-2-8
-description: 'E2E 테스트 : Playwright'
+description: 'E2E Testing : Playwright'
 author: 'dev_hee'
 image:
     url: 'https://velog.velcdn.com/images/heelieben/post/bee2c4bf-6e06-4ccc-98ac-ed7e3a54bf68/image.png'
@@ -10,49 +10,49 @@ tags: ["FrontEnd"]
 
 ---
 
-## 🧪 E2E Test 는 무엇일까요?
+## 🧪 What Is an E2E Test?
 
-E2E(End to End) 테스트는 **애플리케이션 흐름이 예상대로 동작하는지 확인**하기위해 처음부터 끝까지 소프트웨어 제품을 테스트하는 기술입니다. 따라서 E2E 테스트의 주된 목적은 **실제 사용자 시나리오를 시뮬레이션하여 최종 사용자 경험에서 테스트** 하는 것입니다.
+E2E (End to End) testing is a technique for testing a software product from start to finish to **verify that the application flow works as expected**. So the main purpose of E2E testing is to **test from the end-user experience by simulating real user scenarios**.
 
-### 프론트엔드에서 E2E 테스트
+### E2E Testing on the Frontend
 
-프론트엔드에서 E2E 테스트는 사용자가 애플리케이션을 사용할 때 텍스트가 정상적으로 나오는지, 버튼을 클릭하였을 때 기대하는 동작을 하는지, 인풋에 값을 입력하였을 때 정상 동작하는지 등을 테스트합니다. 
+On the frontend, E2E tests check things like whether text shows up correctly when a user uses the application, whether a button does what you expect when clicked, and whether an input works properly when you type a value into it. 
 
-특히 프론트엔드에서 OS와 브라우저엔진 환경이 달라서 발생하는 **크로스 브라우징 이슈**를 E2E 테스트를 통해 미리 방지할 수 있습니다. 앞으로 소개해드릴 PlayWright는 크롬, 웹킷, 파이어폭스 등의 다양한 브라우저와 모바일 환경까지 테스트를 진행할 수 있습니다. 
+In particular, E2E tests can help prevent **cross-browsing issues** on the frontend that arise from differences in OS and browser engine environments. Playwright, which I'll introduce shortly, can run tests on various browsers such as Chrome, WebKit, and Firefox, and even in mobile environments. 
 
 ![](https://velog.velcdn.com/images/heelieben/post/c2a67bf4-efca-4219-b275-5264fb097ade/image.png)
 
-### 우리 모두 사실은 E2E 테스트를 하고있다
+### Actually, We're All Doing E2E Testing Already
 
-사실 개발자들은 모두 E2E 테스트를 하고있습니다. **손가락과 `console.log` 로요!**
-기능 개발을 완료하고 나서 정상적으로 동작하는지 확인하는 과정이 모두 테스트입니다.
-하지만 **다양한 환경(크롬, 사파리, 파이어폭스, MacOS, Windows, IOS, AOS ...)** 에서 모든 테스트 과정을 수행하기 어렵습니다. 그리고 코드 한 줄을 수정하고 나서 어떤 사이드 이펙트가 생길지 모르기 때문에 이를 모두 정상 동작하는지 확인 하기위해선... 또 다시 많은 환경에서 **테스트를 직접(!!) 진행**해야합니다. (~~like 장인 정신~~)
+Truth is, every developer is already doing E2E testing. **With their fingers and `console.log`!**
+The whole process of checking that a feature works properly after you finish developing it is testing.
+But it's hard to run through every test in **various environments (Chrome, Safari, Firefox, MacOS, Windows, IOS, AOS ...)**. And since you never know what side effects a single changed line of code might cause, to make sure everything still works... you have to **run the tests by hand (!!)** across lots of environments all over again. (~~like true craftsmanship~~)
 
-이런 **번거로운 과정을 자동화**하기 위한 여러가지 테스트 도구들이 존재합니다. Playwright, Cypress는 그중에서도 E2E 테스트를 위한 도구들입니다.
+There are various testing tools out there for **automating this tedious process**. Playwright and Cypress are, among them, tools for E2E testing.
 
 
-## 🥊 Playwright와 Cypress
+## 🥊 Playwright and Cypress
 
-Playwright와 Cypress는 E2E 테스트 기능을 제공하는 도구입니다. 둘 다 다양한 브라우저에서 테스트를 진행할 수 있으며, 이를 GUI 로 확인하고, CI 에 붙일 수 있습니다. 하지만 구체적인 스펙과 사용법들은 다릅니다.
+Playwright and Cypress are tools that provide E2E testing features. Both can run tests in various browsers, let you check them via a GUI, and can be hooked up to CI. However, their specific specs and usage differ.
 
-### 1. 지원 브라우저
+### 1. Supported Browsers
 
 #### Cypress
 
-**크로미움** 기반의 브라우저와 **파이어폭스** 두 브라우저를 지원합니다.
+Supports two kinds of browsers: **Chromium**-based browsers and **Firefox**.
 
 #### Playwright
 
-크로미움 기반의 브라우저, 파이어폭스, **사파리같은 WebKit기반 브라우저**를 지원합니다.
-**모바일 브라우저** 환경 또한 제공합니다. 안드로이드 크롬과 안드로이드 웹뷰를 실험 모드로 제공하고 있습니다. (Cypress는 모바일 환경을 제공하지 않습니다)
+Supports Chromium-based browsers, Firefox, and **WebKit-based browsers like Safari**.
+It also provides **mobile browser** environments. Android Chrome and Android WebView are offered in experimental mode. (Cypress does not provide mobile environments.)
 
 
-### 2. 테스트 속도
+### 2. Test Speed
 
-**Cypress**는 모든 테스트가 **직렬**로 실행됩니다. 따라서 테스트(spec 파일)의 갯수가 증가할수록 시간이 오래 걸립니다.
-하지만 **Playwright는** 동시에 수행할 수 있는 테스트는 **병렬**로 실행됩니다. 따라서 테스트(spec 파일)의 갯수가 증가해도 Cypress보다 훨씬 빠르게 진행됩니다. (Cypress는 유료 플랜을 가입해야 CI/CD 환경에서 병렬로 테스트를 수행할 수 있습니다.)
+In **Cypress**, all tests run **serially**. So the more tests (spec files) you have, the longer it takes.
+But in **Playwright**, tests that can run at the same time are run in **parallel**. So even as the number of tests (spec files) grows, it runs much faster than Cypress. (With Cypress, you have to sign up for a paid plan to run tests in parallel in a CI/CD environment.)
 
-### 3. 문법
+### 3. Syntax
 
 #### Cypress
 
@@ -67,8 +67,8 @@ it('입력창에 값을 입력한 뒤 엔터를 누르면 할일이 추가된다
 });
 ```
 
-Cypress는 자체적으로 제공하는 API와 문법을 사용해야합니다. (여기서 러닝커브가 존재합니다.)
-`cy`의 체이닝을 통해 한 줄로 간결하게 작업할 수 있습니다. 위의 예제에선 `should` 를 사용해 갯수와 텍스트를 비교하였습니다.
+Cypress requires you to use its own API and syntax. (This is where the learning curve comes in.)
+Through `cy` chaining, you can do things concisely in a single line. In the example above, `should` is used to compare the count and the text.
 
 #### Playwright
 
@@ -95,27 +95,27 @@ test('입력창에 값을 입력한 뒤 엔터를 누르면 할일이 추가된�
 });
 ```
 
-Playwright는 Cypress와는 다르게 자바스크립트 코드를 짜는 느낌을 받을 수 있습니다. `async`, `await`을 사용하여 비동기를 제어할 수 있기 때문에 실행 순서가 보장되고, 체이닝이 없이 코드를 쭉 나열해 가며 작성할 수 있습니다. 
+Unlike Cypress, Playwright feels like writing JavaScript code. Since you can control async behavior with `async` and `await`, the execution order is guaranteed, and you can write code by simply listing it out line by line without chaining. 
 
-반드시 필요한 selector([Locator](https://playwright.dev/docs/locators))와 expect([Assertions](https://playwright.dev/docs/test-assertions))만 알고 있으면 자바스크립트 코드를 작성하듯 테스트 코드를 작성할 수 있습니다.
+As long as you know the essential selectors ([Locator](https://playwright.dev/docs/locators)) and expects ([Assertions](https://playwright.dev/docs/test-assertions)), you can write test code just like you'd write JavaScript code.
 
-### 4. hover와 drag
+### 4. hover and drag
 
-**Cypress는 hover와 drag와 같은 이벤트를 공식적으로 제공하지 않습니다.** 만약 Cypress를 사용하여 테스트를 진행하고 싶다면 [cypress-real-events](https://github.com/dmtrKovalenko/cypress-real-events)를 사용해 임시로 구현할 수 있습니다. 하지만 공식적인 방법은 아닙니다.
+**Cypress does not officially provide events like hover and drag.** If you want to test them with Cypress, you can implement them as a workaround using [cypress-real-events](https://github.com/dmtrKovalenko/cypress-real-events). But it's not an official approach.
 
-그러나 **Playwright는 hover와 drag 이벤트를 공식 API로 제공하며 쉽게 테스트 할 수 있습니다.**
+However, **Playwright provides hover and drag events as official APIs, making them easy to test.**
 
 
-### 5. 공식 문서
+### 5. Official Docs
 
-둘 다 문서는 잘 제공되어있습니다.
+Both are well documented.
 
 - [Playwright](https://playwright.dev/)
 - [Cypress](https://www.cypress.io/)
 
-### 6. 사용자 규모
+### 6. User Base
 
-아무래도 Cypress가 더 빠르게 나오기도 하였고, Playwright가 태생이 E2E 테스트를 위해 만들어진 것이 아니기 때문에 사용자는 Cypress가 더 많습니다.
+Since Cypress came out earlier, and since Playwright wasn't originally built for E2E testing, Cypress has more users.
 
 https://npmtrends.com/@playwright/test-vs-cypress
 
@@ -123,111 +123,111 @@ https://npmtrends.com/@playwright/test-vs-cypress
 
 
 
-## 🎭 Playwright를 알아보아요!
+## 🎭 Let's Get to Know Playwright!
 
-Playwright의 사용법은 공식문서에 자세히 정리되어 있습니다. 본문에선 간략히 훑어보며 설치부터 테스트까지 진행해보겠습니다.
+How to use Playwright is covered in detail in the official docs. In this post, I'll skim through it briefly and go from installation all the way to testing.
 
-Playwright는 MS에서 만든 오픈소스 웹 테스트 및 자동화 라이브러리입니다. Playwright는 태생이 E2E 테스트 프레임워크가 아닙니다. [Puppeteer](https://pptr.dev/)처럼 브라우저를 컨트롤할 수 있는 API를 제공하는 프로그램입니다. 따라서 테스트를 위해 사용하고자 한다면, [@playwright/test](https://github.com/microsoft/playwright/tree/main/packages/playwright-test)를 같이 사용해야 합니다. 
+Playwright is an open-source web testing and automation library made by MS. Playwright was not originally an E2E testing framework. Like [Puppeteer](https://pptr.dev/), it's a program that provides APIs for controlling the browser. So if you want to use it for testing, you need to use it together with [@playwright/test](https://github.com/microsoft/playwright/tree/main/packages/playwright-test). 
 
-Playwright는 다음과 같은 장점을 가지고 있습니다.
+Playwright has the following advantages.
 
-### 장점
+### Advantages
 
-#### 1. 다양한 브라우저, OS, 언어를 지원합니다.
+#### 1. Supports various browsers, OSes, and languages.
 
-Playwright는 Chromium, WebKit, Firefox 를 포함한 모든 최신 렌더링 엔진을 지원합니다.
-Windows, Linux, macOS에서 테스트 가능하며, headless/headed 모드, 로컬 또는 CI에서 테스트할 수 있습니다. 
-또한 모바일 웹 또한 테스트 가능합니다. Android와 모바일 Safari 환경도 테스트 할 수 있습니다.
+Playwright supports all modern rendering engines, including Chromium, WebKit, and Firefox.
+You can test on Windows, Linux, and macOS, in headless/headed mode, locally or in CI. 
+Mobile web can also be tested. You can test Android and mobile Safari environments too.
 
-#### 2. 탄력적이며 안전한 테스트가 가능합니다.
+#### 2. Enables resilient and reliable tests.
 
-Playwright는 작업을 수행하기 전에 요소가 실행 가능할 때까지 **자동으로 기다립니다**. 예를 들어 버튼을 클릭하면 주어진 선택자가 DOM에 나타날 때까지 기다리고, visible할 때 까지 기다리거나, 애니메이션이 멈출 때 까지 기다립니다. 따라서 요소가 실행 가능할 때 까지 대기하는 코드가 필요하지 않아 편리합니다. 
+Playwright **automatically waits** until elements are actionable before performing actions. For example, when you click a button, it waits until the given selector appears in the DOM, waits until it's visible, or waits until animations stop. So it's convenient because you don't need code that waits for elements to become actionable. 
 
-Playwright는 **동적 웹**을 위해 생성됩니다. 필요한 조건이 충족될 때까지 검사가 자동으로 재시도됩니다.
+Playwright is built for the **dynamic web**. Checks are automatically retried until the required conditions are met.
 
-**테스트 재시도 전략**을 구성하고 **실행 추적, 비디오, 스크린샷**을 저장합니다.
+You can configure a **test retry strategy** and save **execution traces, videos, and screenshots**.
 
-#### 3. 환경에 제한 없이 테스트가 가능합니다.
+#### 3. Lets you test without environment limitations.
 
-**여러 탭과 여러 출처, 여러 사용자**에 걸친 시나리오를 테스트할 수 있습니다. 하나의 테스트 안에서 여러 사용자가 서로 다른 컨텍스트를 가진 시나리오를 작성할 수 있습니다.
+You can test scenarios that span **multiple tabs, multiple origins, and multiple users**. Within a single test, you can write scenarios where multiple users have different contexts.
 
-**Hover, 동적 컨트롤과 상호작용에 대한 신뢰할 수 있는 이벤트**를 제공합니다. Playwright는 실제 사용자와 구별할 수 없는 실제 브라우저 입력 파이프라인을 사용합니다.
+It provides **trusted events for hover and interactions with dynamic controls**. Playwright uses a real browser input pipeline that's indistinguishable from a real user.
 
 
-#### 4. 완전히 독립된 환경에서 빠르게 실행할 수 있습니다.
+#### 4. Runs fast in fully isolated environments.
 
-Playwright는 각 테스트에서 브라우저 컨텍스트를 생성하므로 각각의 테스트는 완전 독립된 환경에서 실행됩니다. 
-인증 상태를 컨텍스트에 저장하며 이는 모든 테스트에서 재사용되어 반복적인 로그인 작업을 줄일 수 있습니다.
+Playwright creates a browser context for each test, so each test runs in a fully isolated environment. 
+Authentication state is saved in the context and reused across all tests, which cuts down on repetitive login work.
 
-### 시작하기
+### Getting Started
 
-#### 설치 및 초기화
+#### Installation and Initialization
 
 ```shell
 npm init playwright@latest
 ```
 
-playwright를 설치하면서 TS, JS 를 선택할 수 있고 Github Action workflow 또한 추가할 수 있습니다.
+While installing Playwright, you can choose TS or JS, and you can also add a Github Action workflow.
 
 ![](https://velog.velcdn.com/images/heelieben/post/e178e1a9-bc39-455b-ab00-cf0d845861d9/image.png)
 
-설치가 완료되면 다음과 같은 디렉토리가 생성됩니다. 예제 테스트코드 `example.spec.ts` 가 추가되어 있으며, `tests-examples` 디렉토리 또한 확인할 수 있습니다. 다만 `tests` 디렉토리 아래에 있는 테스트 파일들만 실행됩니다. 
+Once installation is complete, the following directories are created. An example test file `example.spec.ts` is added, and you can also see a `tests-examples` directory. However, only the test files under the `tests` directory are run. 
 
 ![](https://velog.velcdn.com/images/heelieben/post/d8d341de-8bf3-46fa-b53a-5d5c3763c337/image.png)
 
 
 
-### 테스트 실행
+### Running Tests
 
-#### CLI로 테스트하기
+#### Testing via the CLI
 
-디렉토리에 있는 모든 테스트를 실행합니다.
+Runs all the tests in the directory.
 
 ```
 npx playwright test
 ```
 
-단일 테스트 파일을 실행합니다.
+Runs a single test file.
 
 ```
 npx playwright test file-name
 ```
 
-테스트를 수행하고 나면 `npx playwright show-report`로 테스트 결과를 레포트로 확인해 볼 수 있습니다. 테스트에 오류가 있었다면 레포트는 자동으로 열립니다. 
+After running the tests, you can view the test results as a report with `npx playwright show-report`. If any test failed, the report opens automatically. 
 
 ![](https://velog.velcdn.com/images/heelieben/post/b60f03a6-0d46-4dd7-b93b-193df13544f1/image.png)
 
 
 
-#### VSCode 플러그인으로 테스트하기
+#### Testing with the VSCode Plugin
 
 ![](https://velog.velcdn.com/images/heelieben/post/1e5afb62-7500-48f2-ace7-b32d692e5366/image.png)
 
-Playwright Test for VSCode를 설치하면 다음과 같이 왼쪽 네비게이션바에 테스트 아이콘이 추가됩니다. 여기에서도 테스트를 실행할 수 있으며, 파일보다 더 작은 단위의 테스트도 쉽게 실행할 수 있어서 편리합니다.
+If you install Playwright Test for VSCode, a test icon is added to the left navigation bar as shown. You can run tests from here too, and it's handy because you can easily run tests at units smaller than a file.
 
 ![](https://velog.velcdn.com/images/heelieben/post/4e3067a3-f71d-4fcb-ad74-8063128af9fb/image.png)
 
-또한 테스트 디버깅도 간편합니다. 중단점을 찍고 코드를 한 줄 씩 실행해가며 브라우저에서 테스트가 진행되는 것을 시각적으로 확인할 수 있습니다.
+Debugging tests is easy too. You can set breakpoints and step through the code line by line, visually watching the test progress in the browser.
 
 !youtube[luQ1ExDJROM]
 
-그리고 `Pick locator` 기능을 사용해서 요소 선택자를 빠르게 알 수 있습니다. `Pick locator` 는 텍스트를 기반으로 요소를 가져오기 때문에 일반적인 경우는 해당하지 않지만, 테스트에 익숙하지 않은 개발자에게는 큰 도움이 될 수 있습니다.
+And with the `Pick locator` feature, you can quickly find out an element's selector. Since `Pick locator` grabs elements based on their text, it doesn't fit general cases, but it can be a big help for developers who aren't used to testing.
 
 !youtube[rZDifXantAU]
 
-## 🏃🏻‍♀️ Playwright 문법을 알아봅시다!
+## 🏃🏻‍♀️ Let's Learn Playwright Syntax!
 
-### 선택자 Selector
+### Selectors
 
-테스트 작업은 요소를 찾는 것으로 시작합니다. Playwright는 다양한 선택자를 제공하여 간편하게 요소를 검색할 수 있습니다. 다양한 선택자가 있지만 그 중 개인적으로 많이 사용한 선택자를 소개하고자 합니다.
+Testing starts with finding elements. Playwright provides various selectors so you can search for elements easily. There are many selectors, but I'd like to introduce the ones I personally used a lot.
 
 ![](https://velog.velcdn.com/images/heelieben/post/8d3bb937-993b-4545-91cb-2f5cfcde38b1/image.png)
 
 
 #### 1. [`page.locator`](https://playwright.dev/docs/api/class-page#page-locator)
 
-css 선택자로 요소를 선택할 수 있습니다.
-[css나 XPath로 요소를 검색하는 내용은 공식문서](https://playwright.dev/docs/locators#locate-by-css-or-xpath)에 자세히 나와있습니다.
+You can select elements with css selectors.
+[Searching for elements with css or XPath is covered in detail in the official docs](https://playwright.dev/docs/locators#locate-by-css-or-xpath).
 
 ```ts
 await page.locator('css=button').click(); // css
@@ -237,7 +237,7 @@ await page.locator('#id').click(); // id
 
 #### 2. [`page.getByTestId`](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-test-id)
 
-`dataset`를 기반으로 요소를 검색할 수 있습니다. 다만 반드시 `data-testid` 이여야 합니다.
+You can search for elements based on `dataset`. However, it must be `data-testid`.
 
 ```html
 <button data-testid="login-button">로그인</button>
@@ -250,7 +250,7 @@ await page.getByTestId('login-button').click();
 
 #### 3. [`page.getByRole`](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-role)
 
-ARIA role, ARIA attributes, 접근가능한 이름으로 요소를 찾을 수 있습니다.
+You can find elements by ARIA role, ARIA attributes, and accessible name.
 
 ```html
 <h3>회원가입</h3>
@@ -266,13 +266,13 @@ await expect(page.getByRole('heading', { name: '회원가입' })).toBeVisible();
 
 await page.getByRole('checkbox', { name: /구독/ }).check();
 
-await page.getByRole('button', { name: '제출', exact: true }).click(); // exact:true - 정확히 매칭되는 요소만 가져온다.
+await page.getByRole('button', { name: '제출', exact: true }).click(); // exact:true - only gets elements that match exactly.
 ```
 
 #### 4. [`page.getByText`](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-text)
 
-텍스트가 포함되어 있는 요소를 찾을 수 있습니다.
-여러 요소가 텍스트를 가지고 있다면 [`locator.filter`](https://playwright.dev/docs/api/class-locator#locator-filter) 를 사용해서 원하는 요소만 필터링할 수 있습니다.
+You can find elements that contain text.
+If multiple elements have the text, you can use [`locator.filter`](https://playwright.dev/docs/api/class-locator#locator-filter) to filter down to just the element you want.
 
 ```html
 <div>Hello <span>world</span></div>
@@ -298,7 +298,7 @@ page.getByText(/^hello$/i)
 
 #### 5. [`page.getByPlaceholder`](https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-placeholder)
 
-input 요소를 placeholder 텍스트를 기반으로 찾을 수 있습니다.
+You can find input elements based on their placeholder text.
 
 ```html
 <input type="email" placeholder="name@example.com" />
@@ -312,8 +312,8 @@ await page
 
 #### 6. [locator.filter](https://playwright.dev/docs/api/class-locator#locator-filter)
 
-여러개의 선택자들 중 원하는 요소를 필터링 할 수 있습니다.
-`option`값으로 조건을 걸 수 있는데, `hasText` 는 텍스트를 가지고 있는지를 기반으로 필터링하며 `has`는 특정 선택자를 가지고 있는지를 기반으로 필터링 합니다.
+You can filter the element you want out of multiple selectors.
+You can set conditions with the `option` value: `hasText` filters based on whether it contains the text, and `has` filters based on whether it contains a specific selector.
 
 ```ts
 const rowLocator = page.locator('tr');
@@ -324,44 +324,44 @@ await rowLocator
     .screenshot();
 ```
 
-### 페이지 Pages
+### Pages
 
-페이지는 각각의 컨텍스트를 가지고있어서 여러개의 페이지를 만들면 제각기 다른 탭에서 작업하는 것처럼 작업할 수 있습니다.
+Each page has its own context, so if you create multiple pages, you can work with them as if you were working in separate tabs.
 
 ```ts
-// 페이지1, 페이지2 생성
+// Create page1 and page2
 const page1 = await context.newPage();
 const page2 = await context.newPage();
 
-// 페이지1에서 작업
+// Work on page1
 await page1.goto('http://example1.com');
 await page1.getByRole('button', { name: '참여하기' }).click();
 
-// 페이지2에서 작업
+// Work on page2
 await page2.goto('http://example2.com');
 await page2.getByRole('button', { name: '모아보기' }).click();
 ```
 
-### 자동 대기 Auto-Wait
+### Auto-Wait
 
-작업들은 요소가 보여지고 실행 가능해질 때까지 자동으로 기다린 후 수행됩니다.
-예를들어 버튼을 클릭하면 다음과 같이 기다립니다.
+Actions are performed after automatically waiting until the element is visible and actionable.
+For example, when you click a button, it waits as follows.
 
-- 주어진 선택자가 DOM에 나타날때 까지 기다린다.
-- visible할 때까지 기다립니다.
-- 애니메이션이 멈출 때까지 기다립니다.
+- Waits until the given selector appears in the DOM.
+- Waits until it's visible.
+- Waits until animations stop.
 
-자동 대기 덕분에 요소를 가져오기위해 대기하는 코드를 작성하지 않아도 됩니다. 그저 요소를 가져와 입력하는 등의 동작을 수행하면 됩니다.
+Thanks to auto-waiting, you don't have to write code that waits to get elements. You just get the element and perform actions like typing.
 
 #### [waitForSelector](https://playwright.dev/docs/api/class-frame#frame-wait-for-selector)
 
-요소가 나타날때 까지 명시적으로 기다릴 수도 있습니다. 사실 필자는 자동 대기 기능이 서비스마다 기대하는 바가 달라질 수 있기 때문에, 명시적으로 기다리는 코드를 사용하였습니다.
+You can also explicitly wait until an element appears. Actually, since what you expect from auto-waiting can vary from service to service, I used code that waits explicitly.
 
 ```ts
 await page.waitForSelector('#login-button');
 ```
 
-또한 반대로 요소가 사라지거나 DOM에서 제거될 때 까지 기다릴 수도 있습니다.
+Conversely, you can also wait until an element disappears or is removed from the DOM.
 
 ```ts
 await page.waitForSelector('#login-button', { state: 'hidden' });
@@ -369,24 +369,24 @@ await page.waitForSelector('#login-button', { state: 'hidden' });
 
 #### [waitForLoadState](https://playwright.dev/docs/api/class-frame#frame-wait-for-load-state)
 
-필요한 로드 상태에 도달할 때까지 기다립니다.
+Waits until the required load state is reached.
 
 ```ts
 await frame.click('button'); // Click triggers navigation.
 await frame.waitForLoadState(); // Waits for 'load' state by default.
 ```
 
-매개변수로 `state`를 전달할 수 있습니다. 어떤 로드 상태일 때까지를 기다리는지 명시합니다.
+You can pass `state` as a parameter. It specifies which load state to wait for.
 
-- "load" : `load` 이벤트가 실행될 때까지 기다립니다. 기본값입니다.
-- "domcontentloaded": `DOMContentLoaded` 이벤트가 실행될 때까지 기다립니다.
-- "networkidle": 최소 500ms동안 네트워크 연결이 없을 때까지 기다립니다.
+- "load" : Waits until the `load` event fires. This is the default.
+- "domcontentloaded": Waits until the `DOMContentLoaded` event fires.
+- "networkidle": Waits until there are no network connections for at least 500ms.
 
 
 
 #### [waitForTimeout](https://playwright.dev/docs/api/class-frame#frame-wait-for-timeout)
 
-입력받은 ms 만큼 대기합니다. 공식문서에서는 waitForTimeout의 사용은 신뢰할 수 없는(항상 통과하지는 않는) 테스트코드를 만들어낼 수 있으므로, 네트워크 이벤트나 selector가 visible할 때를 기다리는 다른 메서드를 사용하기를 권장합니다.
+Waits for the given number of ms. The official docs say that using waitForTimeout can produce unreliable (not always passing) test code, so they recommend using other methods that wait for network events or for a selector to be visible.
 
 ```ts
 await frame.waitForTimeout(timeout);
@@ -395,17 +395,17 @@ await frame.waitForTimeout(timeout);
 
 
 
-## 🚧 Playwright로 테스트코드를 작성해봅시다!
+## 🚧 Let's Write Test Code with Playwright!
 
-Playwright 를 사용해서 세 명의 사용자가 초대장을 보내고 수락/거절하는 시나리오를 작성해봅시다.
+Let's use Playwright to write a scenario where three users send an invitation and accept/decline it.
 
-먼저 이번 초대장 테스트 예제는 테스트가 작성된 순서대로 실행되었으면 하므로 병렬이 아닌 직렬로 테스트를 실행합니다. 테스트 모드를 `serial`로 설정합니다.
+First, for this invitation test example, we want the tests to run in the order they're written, so we run them serially rather than in parallel. We set the test mode to `serial`.
 
 ```ts
 test.describe.configure({ mode: 'serial' });
 ```
 
-또한 우리 서비스는 한국어가 주된 사용자 층이고 개발자도 한국어를 사용하므로 언어를 한국어로 설정합니다. 기본 언어는 영어입니다.
+Also, since our service's main user base is Korean and the developers use Korean too, we set the language to Korean. The default language is English.
 
 ```ts
 test.use({
@@ -413,8 +413,8 @@ test.use({
 });
 ```
 
-`test.describe`로 같은 종류의 테스트는 묶어줍니다.
-3명의 페이지와 각 테스트가 수행되면서 기억되어야 할 상태를 선언합니다.
+Group tests of the same kind together with `test.describe`.
+Declare pages for the 3 users and the state that needs to be remembered as each test runs.
 
 ```ts
 test.describe('[초대장 테스트]', () => {
@@ -426,11 +426,11 @@ test.describe('[초대장 테스트]', () => {
     boardName: '',
     timeStamp: getTimeStamp(),
   };
-  //  앞으로 진행할 테스트들 ...
+  //  Tests to be run going forward ...
 });
 ```
 
-모든 테스트가 수행되기 전에 초기에 한번 실행해야하는 작업을 `test.beforeAll`로 실행합니다. 3개의 페이지를 생성하고 각 페이지에 로그인을 수행합니다.
+Work that needs to run once at the start, before all tests run, goes in `test.beforeAll`. We create 3 pages and log in on each page.
 
 ```ts
   test.beforeAll(async ({ browser }) => {
@@ -446,11 +446,11 @@ test.describe('[초대장 테스트]', () => {
   });
 ```
 
-그리고 모든 테스트가 종료된 후에 실행되어야 하는 작업을 `test.afterAll`로 실행합니다. 테스트과정에서 새로 생성한 보드를 삭제하고 페이지를 닫습니다.
+And work that needs to run after all tests have finished goes in `test.afterAll`. We delete the board newly created during testing and close the pages.
 
 ```ts
   test.afterAll(async () => {
-    // 새로 생성한 보드 삭제
+    // Delete the newly created board
     await deleteBoard({ page: page1, boardName: state.boardName });
 
     page1.close();
@@ -459,7 +459,7 @@ test.describe('[초대장 테스트]', () => {
   });
 ```
 
-이제 테스트를 위한 준비는 끝이 났습니다. 기대하는 시나리오 대로 테스트를 `test`를 사용해서 작성해줍니다.
+Now the preparation for testing is done. Write the tests with `test`, following the expected scenario.
 
 ```ts
    test('1. "[e2e] 테스트 보드 {timestamp}" 이름의 새로운 비공개 보드를 생성합니다.', async () => {
@@ -484,7 +484,7 @@ test.describe('[초대장 테스트]', () => {
   });
 
   test('3. "A"로 로그인하여 초대를 수락합니다. ', async () => {
-    await page2.goto('http://localhost:3000');  // 새로고침
+    await page2.goto('http://localhost:3000');  // Refresh
     await page2.getByTestId('invitation-button').click();
     await page2.getByRole('listitem').filter({ hasText: state.boardName }).first().getByText('수락').click();
     await page2.waitForLoadState('networkidle');
@@ -498,7 +498,7 @@ test.describe('[초대장 테스트]', () => {
   });
 
   test('4. "B"로 로그인하여 초대를 거절합니다. ', async () => {
-    await page3.goto('http://localhost:3000'); // 새로고침
+    await page3.goto('http://localhost:3000'); // Refresh
     await page3.getByTestId('invitation-button').click();
     await page3.getByRole('listitem').filter({ hasText: state.boardName }).first().getByText('거절').click();
     await page2.waitForLoadState('networkidle');
@@ -513,22 +513,22 @@ test.describe('[초대장 테스트]', () => {
 ```
 
 
-## ⚡️ Playwright와 Github Actions를 사용해 CI로 테스트 자동화해요!
+## ⚡️ Let's Automate Tests in CI with Playwright and Github Actions!
 
-Github Actions는 개발 라이프사이클 안에서 PR, Push 등의 이벤트가 발생할 때 자동화된 작업을 수행할 수 있게 도와주는 기능입니다. CI/CD 는 Github Actions로 구축할 수 있으며, 이벤트 발생에 따라 자동으로 테스트 와 빌드 및 배포하는 스크립트를 실행할 수 있습니다. 
+Github Actions is a feature that helps you run automated tasks when events like PRs and Pushes happen within the development lifecycle. You can build CI/CD with Github Actions, and run scripts that automatically test, build, and deploy depending on the events that occur. 
 
-`.github/workflows` 폴더 안에 `e2e-test.yml` 파일을 생성해서 테스트 환경 구축 및 테스트 실행하는 명령어를 저장할 수 있습니다. 
+You can create an `e2e-test.yml` file inside the `.github/workflows` folder to store the commands for setting up the test environment and running the tests. 
 
-[Playwright 공식문서에서 CI Github Actions](https://playwright.dev/docs/ci-intro) 에 대한 내용이 잘 정리되어 있습니다. 
+[The Playwright official docs on CI Github Actions](https://playwright.dev/docs/ci-intro) cover this nicely. 
 
-yml 에서 사용하는 각각의 용어를 간략하게 설명하면 다음과 같습니다.
+Here's a brief explanation of each term used in the yml.
 
 ```yml
 name: workboard FE - E2E CI
 
 
 on: 
-  # 원하는 브랜치/태그에서 PR과 Push 이벤트가 발생하면 테스트를 자동으로 실행합니다.
+  # Automatically runs the tests when PR and Push events occur on the desired branches/tags.
   push:
     branches:
       - cbt
@@ -542,9 +542,9 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    # 실행할 환경입니다. 
+    # The environment to run on. 
     runs-on: k8s
-    # 다음의 단계를 수행합니다.
+    # Performs the following steps.
     steps:
       - uses: actions/checkout@v2
       
@@ -560,11 +560,11 @@ jobs:
         env:
           CI: true
 
-      # 프록시 서버 패키지를 설치합니다.
+      # Installs the proxy server packages.
       - name: dev proxy server npm 패키지 설치
         run: cd proxy-server && npm ci
 
-      # Playwright e2e테스트에서 사용할 브라우저를 설치합니다.
+      # Installs the browsers to be used in the Playwright e2e tests.
       - name: Playwright Browsers 설치
         run: cd .. && npx playwright install --with-deps
 
@@ -579,17 +579,17 @@ jobs:
           retention-days: 30
 ```
 
-그리고 `playwright.config.ts`에서 테스트를 실행하기 전에 실행시켜야할 웹 서버들을 설정하면 자동으로 테스트 전에 웹서버를 실행시켜줍니다. 저는 개발환경에서는 직접 웹 서버를 실행시킨 상태에서 테스트를 수행하고 싶었고, CI 에서만 자동으로 웹서버를 실행되었으면 하여 `process.env.CI` 를 통해 분기처리를 해주었습니다.
+Then, if you configure in `playwright.config.ts` the web servers that need to be running before the tests, it automatically starts those web servers before testing. In the dev environment I wanted to run tests while running the web server myself, and I wanted the web server to start automatically only in CI, so I branched on `process.env.CI`.
 
 ```ts
   /* Run your local dev server before starting the tests */
   webServer: process.env.CI
     ? [
-        { // 웹 서버
+        { // Web server
           command: 'npm run dev',
           port: 3000,
         },
-        { // 프록시 서버
+        { // Proxy server
           command: 'cd proxy-server && npm run dev',
           port: 8080,
         },
@@ -597,36 +597,36 @@ jobs:
     : undefined,
 ```
 
-위의 환경 설정을 원격저장소에 올리고 나면 지정해준 브랜치/태그에 대한 PR, Push 이벤트가 발생했을 때 테스트를 실행합니다. 테스트가 정상적으로 통과하면 다음과 같이 successful check를 확인할 수 있습니다.
+Once you push the above configuration to the remote repository, tests run whenever PR or Push events occur for the specified branches/tags. If the tests pass, you can see a successful check like this.
 
 ![](https://velog.velcdn.com/images/heelieben/post/a7762232-7cd2-4800-8d15-3a731b34bee1/image.png)
 
-Github > Actions 로 들어가 테스트가 실행된 디테일을 확인할 수 있습니다.
+You can go to Github > Actions to see the details of the test run.
 
 ![](https://velog.velcdn.com/images/heelieben/post/05dfcbbc-c7d2-4780-b5e8-465fb73158ca/image.06)
 
-Airtifacts에 `playwright-report`를 다운로드 받으면 다음과 같은 결과 레포트를 받아볼 수 있습니다.
+If you download `playwright-report` from Airtifacts, you get a result report like this.
 
 ![](https://velog.velcdn.com/images/heelieben/post/1839cac1-0446-4982-b9f0-490a0d368fd0/image.20)
 
-또한 yml파일에 있는 명령어를 실행하며 남은 로그 또한 자세하게 확인 가능합니다.
+You can also check the detailed logs left while running the commands in the yml file.
 ![](https://velog.velcdn.com/images/heelieben/post/d1fc9046-6204-4aeb-92e5-f2c2721827e8/image.30)
 
 ---
 
-## 마치며...
+## Wrapping Up...
 
 ![](https://velog.velcdn.com/images/heelieben/post/db225f3a-255e-4f0a-a9e9-08859952b0bf/image.PNG)
 
-> 그림 출처는 본인입니다. [@dev_hee](https://www.instagram.com/dev_hee/) 최근에는 그림을 못 올렸지만 여유로워지면 다시 업로드할 예정입니다 🥹
+> The drawing is by me. [@dev_hee](https://www.instagram.com/dev_hee/) I haven't been able to post drawings lately, but I plan to start uploading again once things calm down 🥹
 
-항상 테스트 코드에 대해 목말라있었지만 실제로 테스트 코드를 작성해보진 않았던(?) 주니어 개발자에서, 실무 프로젝트에 E2E 테스트를 CI로 구축하며 많은 것을 배울 수 있었습니다. **테스트 라이브러리에도 다양한 취향과 가치가 존재한다는 것**을 알게되었으며, **자동화에 대한 두려움을 타파하고 편리함을 맛보게** 되어서 뿌듯하였습니다. ~~TDD가 탄수화물(?)에서 테스트로 진화하는 날까지, 화이팅!!~~
-
-
+As a junior developer who'd always been thirsty for test code but had never actually written any (?), I learned a lot by building E2E tests into CI on a real work project. I came to realize that **test libraries come with all sorts of different tastes and values**, and I felt proud to have **broken through my fear of automation and gotten a taste of its convenience**. ~~Until the day TDD evolves from carbs(?) into tests, fighting!!~~
 
 
 
-### 참고
+
+
+### References
 
 >
 - https://playwright.dev/

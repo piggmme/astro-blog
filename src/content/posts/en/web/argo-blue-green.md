@@ -1,7 +1,7 @@
 ---
-title: 'ArgoCD Rollout로 Blue/Green 배포하기'
+title: 'Blue/Green Deployment with ArgoCD Rollout'
 pubDate: 2025-3-19
-description: 'ArgoCD Rollout로 Blue/Green 배포하기'
+description: 'Blue/Green Deployment with ArgoCD Rollout'
 author: 'dev_hee'
 image:
     url: ''
@@ -9,68 +9,68 @@ image:
 tags: ["Web"]
 ---
 
-## ArgoCD란?
+## What is ArgoCD?
 
-ArgoCD는 쿠버네티스를 위한 선언적 GitOps CD(Continuous Delivery) 도구이다. GitOps란 Git 저장소에 있는 선언적 설정을 기반으로 인프라와 애플리케이션을 관리하는 방식이다.
+ArgoCD is a declarative GitOps CD (Continuous Delivery) tool for Kubernetes. GitOps is a way of managing infrastructure and applications based on declarative configuration stored in a Git repository.
 
-### ArgoCD의 주요 특징
+### Key features of ArgoCD
 
-- 선언적 배포 (Declarative deployment):
-    Git 리포지토리에 선언된 YAML 상태를 쿠버네티스 클러스터 상태와 일치시키도록 지속적으로 관리한다.
+- Declarative deployment:
+    It continuously manages the Kubernetes cluster state so that it matches the YAML state declared in the Git repository.
 
-- 자동화된 동기화 (Automated Sync):
-    Git 저장소의 변경을 자동으로 감지해 배포를 수행한다.
+- Automated Sync:
+    It automatically detects changes in the Git repository and performs the deployment.
 
-- 상태 시각화 (Visual dashboard):
-    배포 상태를 UI를 통해 직관적으로 확인할 수 있다.
+- Visual dashboard:
+    You can check deployment status intuitively through the UI.
 
-- 배포 이력 관리 (Deployment history):
-    이전 배포 버전으로 손쉽게 롤백할 수 있는 기능도 지원한다.
+- Deployment history:
+    It also supports easily rolling back to a previous deployment version.
 
-## Blue/Green 배포란?
+## What is Blue/Green deployment?
 
-Blue/Green 배포는 무중단 배포 전략 중 하나로, 동일한 환경을 두 개 구성하여 버전을 교체하는 방식이다.
-쿠버네티스는 기본적으로 Rolling 업데이트를 지원하며, 그 외의 다른 배포 전략을 사용하고 싶다면 ArgoCD의 추가 프로젝트인 Rollouts를 사용하면 가능하다.
+Blue/Green deployment is one of the zero-downtime deployment strategies, where you set up two identical environments and swap versions between them.
+Kubernetes supports Rolling updates by default, and if you want to use other deployment strategies, you can do so with Rollouts, an add-on project of ArgoCD.
 
-### 동작 방식
+### How it works
 
-1. **초기 상태**
-   - Blue 환경: 현재 버전 (v1) 운영 중
-   - Green 환경: 대기 상태
+1. **Initial state**
+   - Blue environment: running the current version (v1)
+   - Green environment: on standby
 
-2. **새 버전 배포**
-   - Green 환경에 새 버전 (v2) 배포
-   - 이때 Blue 환경은 계속 운영됨
+2. **Deploying a new version**
+   - Deploy the new version (v2) to the Green environment
+   - Meanwhile, the Blue environment keeps running
 
-3. **테스트 및 전환**
-   - Green 환경 테스트 진행
-   - 문제가 없으면 트래픽을 Blue에서 Green으로 전환
+3. **Testing and switching**
+   - Run tests on the Green environment
+   - If there are no problems, switch traffic from Blue to Green
 
-4. **완료 후**
-   - Green이 새로운 운영 환경이 됨
-   - Blue는 롤백을 위해 대기 상태로 유지
+4. **After completion**
+   - Green becomes the new production environment
+   - Blue is kept on standby for rollback
 
-### Blue/Green 배포의 장단점
+### Pros and cons of Blue/Green deployment
 
-**장점:**
-- 무중단 배포 가능
-- 빠른 롤백 가능 (트래픽만 다시 전환)
-- 새 버전 사전 검증 가능
+**Pros:**
+- Zero-downtime deployment possible
+- Fast rollback possible (just switch the traffic back)
+- New version can be validated in advance
 
-**단점:**
-- 리소스가 두 배로 필요
-- 데이터베이스 스키마 변경 시 복잡
-- 전환 시점의 세션 관리 필요
+**Cons:**
+- Requires twice the resources
+- Complicated when the database schema changes
+- Session management needed at the moment of switching
 
-## ArgoCD Rollout으로 Blue/Green 배포하기
+## Blue/Green deployment with ArgoCD Rollout
 
-ArgoCD는 Argo Rollouts라는 컨트롤러를 통해 Blue/Green 배포를 지원한다. Rollout 리소스를 통해 배포 전략을 정의하고 관리할 수 있다.
+ArgoCD supports Blue/Green deployment through a controller called Argo Rollouts. You can define and manage the deployment strategy via the Rollout resource.
 
-이미 기본 쿠버네티스 환경이 구성되어 있다면 3번부터 진행하면 된다.
+If you already have a basic Kubernetes environment set up, you can start from step 3.
 
-### 1. Helm 설치
+### 1. Install Helm
 
-Helm은 쿠버네티스 패키지 매니저 역할을 한다.
+Helm acts as the package manager for Kubernetes.
 
 ```sh
 # mac
@@ -80,14 +80,14 @@ brew install helm
 choco install kubernetes-helm
 ```
 
-Helm이 정상적으로 설치되었는지 확인한다.
+Check that Helm was installed properly.
 ```sh
 helm version
 ```
 
-### 2. Helm 차트 생성하기
+### 2. Create a Helm chart
 
-Helm 차트는 쿠버네티스 리소스를 관리하는 템플릿이다. 새 차트를 생성하기 위해 아래 명령어를 실행한다. 그 결과 `mychart/` 디렉토리가 생성되고 기본적인 템플릿이 포함되어 있다.
+A Helm chart is a template for managing Kubernetes resources. Run the command below to create a new chart. As a result, a `mychart/` directory is created containing basic templates.
 
 ```sh
 helm create mychart
@@ -95,24 +95,24 @@ helm create mychart
 
 ```bash
 mychart/
-│── charts/        # 서브 차트 (의존성) 관리
-│── templates/     # 쿠버네티스 리소스 템플릿 파일 (.yaml)
-│── values.yaml    # 기본 설정 값
-│── Chart.yaml     # 차트 메타데이터
-│── README.md      # 설명 파일
+│── charts/        # Manages subcharts (dependencies)
+│── templates/     # Kubernetes resource template files (.yaml)
+│── values.yaml    # Default configuration values
+│── Chart.yaml     # Chart metadata
+│── README.md      # Description file
 ```
 
-- `Chart.yaml`: 차트의 이름, 버전, 설명 등을 포함하는 메타데이터 파일
-- `values.yaml`: 기본 설정 값 (이 값을 수정하면 쉽게 배포 환경을 변경 가능)
-- `templates/`: 쿠버네티스 배포를 위한 템플릿 YAML 파일들 (예: deployment.yaml, service.yaml 등)
-- `charts/`: 서브 차트가 있는 경우 여기에 추가됨
+- `Chart.yaml`: metadata file containing the chart's name, version, description, etc.
+- `values.yaml`: default configuration values (modifying these lets you easily change the deployment environment)
+- `templates/`: template YAML files for Kubernetes deployment (e.g. deployment.yaml, service.yaml, etc.)
+- `charts/`: added here if there are subcharts
 
 
-### 3. `values.yaml` 수정
+### 3. Modify `values.yaml`
 
-`values.yaml`은 Helm 차트에서 사용할 기본 값을 정의한다. 예를 들어, replicaCount, image 같은 설정을 변경할 수 있다.
+`values.yaml` defines the default values used by the Helm chart. For example, you can change settings like replicaCount and image.
 
-만약 운영 환경과 테스트 환경에 따라 값들이 달라진다면 `values-prod.yaml`, `values-sandbox.yaml` 를 생성한 뒤 값을 추가해 주면 된다. 이 때, 두 환경에서 같은 값이 사용되는 경우는 `values.yaml`에 정의하면 된다.
+If the values differ between the production and test environments, you can create `values-prod.yaml` and `values-sandbox.yaml` and add the values there. In that case, values used in both environments can be defined in `values.yaml`.
 
 ```yaml
 replicaCount: 2
@@ -127,10 +127,10 @@ service:
   port: 80
 ```
 
-### 4. Argo Rollouts 설치하기
+### 4. Install Argo Rollouts
 
-쿠버네티스 환경에 아래처럼 Rollouts를 설치한다.
-단 주의해야 할 점은 네임 스페이스(`argo-rollouts`)를 변경하면 안된다.
+Install Rollouts into the Kubernetes environment as below.
+One thing to watch out for, though: you must not change the namespace (`argo-rollouts`).
 
 ```sh
 kubectl create namespace argo-rollouts
@@ -138,25 +138,25 @@ kubectl create namespace argo-rollouts
 kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 ```
 
-Argo Rollouts CLI 를 설치하면 더 쉽게 모니터링할 수 있다.
+Installing the Argo Rollouts CLI makes monitoring easier.
 
 ```sh
 brew install argo-rollouts
 ```
 
-아래 명령어로 파드가 잘 실행되었는지 확인한다.
+Check that the pods are running properly with the command below.
 
 ```sh
 kubectl get pods -n argo-rollouts
 ```
 
-### 5. `rollout.yaml` 생성하기
+### 5. Create `rollout.yaml`
 
-> ⚠️ 주의: rollout은 쿠버네티스 기본 구성인 deployment 를 대신해서 파드를 제어하기 때문에, 만약 기존 구성에 deployment가 있었다면 거기에 작성된 spec을 rollout.yaml로 옮겨 적은 뒤 파일을 제거해야 한다.
+> ⚠️ Caution: a rollout controls pods in place of a deployment, which is a basic Kubernetes construct, so if your existing setup had a deployment, you need to move the spec written there into rollout.yaml and then remove that file.
 
-기본 구성에서 `my-app`을 프로젝트 이름으로 변경하면 된다.
+In the basic setup, just change `my-app` to your project name.
 
-- 참고: 여기서는 설명의 편의를 위해서 값들을 직접 템플릿에 작성했는데, `values.yaml` 를 사용해서 따로 관리해주는 것이 좋다.
+- Note: here I wrote the values directly in the template for ease of explanation, but it's better to manage them separately using `values.yaml`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -173,7 +173,7 @@ spec:
     blueGreen:
       activeService: my-app-service
       previewService: my-app-preview-service
-      autoPromotionEnabled: true  # 배포 이후 자동 전환 여부 (수동 전환하고 싶으면 false)
+      autoPromotionEnabled: true  # Whether to switch automatically after deployment (false if you want to switch manually)
   template:
     metadata:
       labels:
@@ -181,25 +181,25 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: my-app:v1  # 이미지 버전
+        image: my-app:v1  # Image version
         ports:
         - containerPort: 80
 ```
 
-### 6. `service.yaml` 구성하기
+### 6. Configure `service.yaml`
 
-Argo Rollouts는 트래픽을 두 개의 서비스로 관리한다.
+Argo Rollouts manages traffic with two services.
 
-- 현재 운영 중인 서비스
-- 새로 배포할 서비스
+- The service currently in production
+- The service to be newly deployed
 
-Blue/Green 배포를 진행하게 되면 새로 배포할 서비스에 연결된 파드들이 생성되고, 파드가 모두 생성되고 나면 한번에 트래픽이 현재 운영 중인 서비스에서 새로 배포할 서비스로 이동하게 된다.
+When a Blue/Green deployment runs, pods attached to the service to be newly deployed are created, and once all the pods are created, traffic moves all at once from the service currently in production to the newly deployed service.
 
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service # 현재 운영 중인 서비스
+  name: my-app-service # Service currently in production
 spec:
   selector:
     app: my-app
@@ -211,7 +211,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-preview-service # 새로 배포할 서비스
+  name: my-app-preview-service # Service to be newly deployed
 spec:
   selector:
     app: my-app
@@ -221,9 +221,9 @@ spec:
   type: LoadBalancer
 ```
 
-### 7. 새로운 버전 배포하기
+### 7. Deploy a new version
 
-`rollout.yaml` 에서 이미지 버전을 변경한 뒤 변경사항을 적용하면 새로운 버전으로 배포 된다.
+Change the image version in `rollout.yaml` and apply the change, and it gets deployed as the new version.
 
 ```yaml
 # rollout.yaml
@@ -232,15 +232,15 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: my-app:v2  # v1 → v2로 변경
+        image: my-app:v2  # Changed v1 → v2
 ```
 
 
-## 트러블 슈팅
+## Troubleshooting
 
-### Blue/Green 배포시 과도하게 파드가 많이 생성됨
+### Too many pods created during Blue/Green deployment
 
-새로운 버전을 배포할 때 파드가 과도하게 많이 생성되는 현상이 발생하였다.
+When deploying a new version, an excessive number of pods were being created.
 
 ```yaml
 # rollout.yaml
@@ -249,30 +249,30 @@ spec:
       activeService: my-app-service
       previewService: my-app-preview-service
       autoPromotionEnabled: true
-      scaleDownDelaySeconds: 30 # 이전 버전(old version)을 종료하기 전까지 30초 대기
+      scaleDownDelaySeconds: 30 # Wait 30 seconds before terminating the previous version (old version)
 ```
 
-`scaleDownDelaySeconds` 파라미터를 추가해서 해결할 수 있었다.
+I was able to solve it by adding the `scaleDownDelaySeconds` parameter.
 
-`scaleDownDelaySeconds` 파라미터는
-- Blue/Green 배포가 성공적으로 완료된 후
-- 이전 버전(old version)을 종료하기 전까지 대기하는 시간을 초 단위로 지정
-- 여기서는 30초로 설정
+The `scaleDownDelaySeconds` parameter
+- after the Blue/Green deployment completes successfully,
+- specifies, in seconds, how long to wait before terminating the previous version (old version)
+- here it's set to 30 seconds
 
-이 지연 시간(delay)이 필요한 이유는
+The reasons this delay is needed are
 
-1. 새 버전으로 전환 후 문제가 발생했을 때 빠른 롤백을 위해
-2. 진행 중인 요청들이 안전하게 완료될 수 있도록 하기 위해
+1. To allow a quick rollback if a problem occurs after switching to the new version
+2. To let in-flight requests complete safely
 
-예를 들어:
-- 새 버전(Green)으로 전환 완료
-- 30초 동안 이전 버전(Blue) 유지
-- 30초 후 이전 버전 종료
+For example:
+- Switch to the new version (Green) completes
+- Keep the previous version (Blue) for 30 seconds
+- Terminate the previous version after 30 seconds
 
-### `hpa.yaml` 적용
+### Applying `hpa.yaml`
 
-ArgoCD Rollouts를 적용하기 이전에 `HPA`가 적용되어 있었는데,
-rollouts을 적용하면서 `HPA`가 정상적으로 동작하지 않았다.
+`HPA` had been applied before applying ArgoCD Rollouts,
+but after applying rollouts, `HPA` stopped working properly.
 
 ```yaml
 apiVersion: autoscaling/v2
@@ -281,25 +281,25 @@ metadata:
   name: my-app-hpa
 spec:
   scaleTargetRef:
-    apiVersion: argoproj.io/v1alpha1  # ✅ Rollout을 대상으로 변경
-    kind: Rollout  # ✅ Deployment → Rollout 변경
-    name: my-app-rollout  # ✅ 실제 Rollout 이름과 동일하게 설정
+    apiVersion: argoproj.io/v1alpha1  # ✅ Change the target to Rollout
+    kind: Rollout  # ✅ Change Deployment → Rollout
+    name: my-app-rollout  # ✅ Set to match the actual Rollout name
 ```
 
-위와 같이 `Deployment` 대신에 새로 생성한 `Rollout`을 적용하면 `HPA`가 정상적으로 동작하는 것을 확인할 수 있다.
+As above, if you apply the newly created `Rollout` instead of `Deployment`, you can see that `HPA` works properly.
 
-### 배포 성공/실패시 알림 보내기
+### Sending notifications on deployment success/failure
 
-ArgoCD의 Hook을 사용한 배포 성공/실패 알림 Job을 정의할 수있다.
+You can define deployment success/failure notification Jobs using ArgoCD Hooks.
 
-- 참고: https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#using-a-hook-to-send-a-slack-message
+- Reference: https://argo-cd.readthedocs.io/en/stable/user-guide/resource_hooks/#using-a-hook-to-send-a-slack-message
 
 ```yaml
-# 배포 성공
+# Deployment success
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: notification-success- # 이름은 원하는 대로 수정 가능
+  generateName: notification-success- # Name can be changed as you like
   annotations:
     argocd.argoproj.io/hook: PostSync
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
@@ -307,7 +307,7 @@ spec:
   template:
     spec:
       containers:
-      - name: notification-success # 이름은 원하는 대로 수정 가능
+      - name: notification-success # Name can be changed as you like
         image: curlimages/curl
         command:
           - "curl"
@@ -319,11 +319,11 @@ spec:
       restartPolicy: Never
   backoffLimit: 2
 ---
-# 배포 실패
+# Deployment failure
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: notification-fail- # 이름은 원하는 대로 수정 가능
+  generateName: notification-fail- # Name can be changed as you like
   annotations:
     argocd.argoproj.io/hook: SyncFail
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
@@ -331,7 +331,7 @@ spec:
   template:
     spec:
       containers:
-      - name: notification-fail # 이름은 원하는 대로 수정 가능
+      - name: notification-fail # Name can be changed as you like
         image: curlimages/curl
         command:
           - "curl"

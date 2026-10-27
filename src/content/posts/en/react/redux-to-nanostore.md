@@ -1,7 +1,7 @@
 ---
-title: '복잡한 Redux에서 벗어나기'
+title: 'Breaking Free from Complex Redux'
 pubDate: 2026-1-4
-description: '복잡한 Redux에서 벗어나기'
+description: 'Breaking Free from Complex Redux'
 author: 'dev_hee'
 image:
     url: ''
@@ -9,21 +9,21 @@ image:
 tags: ["React"]
 
 ---
-# Redux에서 벗어나기
+# Breaking Free from Redux
 
-## Redux → axios + transformer + Nanostores로 점진적 마이그레이션한 이유와 전체 과정
+## Why and how we gradually migrated from Redux → axios + transformer + Nanostores
 
-프론트엔드 개발을 하다 보면 Redux는 점점 **상태 관리 라이브러리**가 아니라
-**비동기 처리, 데이터 가공, 비즈니스 로직까지 모두 몰아넣는 장소**가 되는 순간이 옵니다.
+As you do frontend development, there comes a moment when Redux stops being a **state management library**
+and becomes **the place where everything gets dumped — async handling, data processing, and even business logic**.
 
-저 역시 그런 프로젝트를 경험했습니다.
+I've been through a project like that myself.
 
-이 글은 실제 레거시 프로젝트에서
-**Redux 중심 구조를 axios + transformer + Nanostores 구조로 점진적으로 전환한 경험**을 정리한 기록입니다.
+This post is a record of my experience
+**gradually converting a Redux-centric structure into an axios + transformer + Nanostores structure** in a real legacy project.
 
-## 💣 기존 Redux 구조의 전체 그림
+## 💣 The big picture of the old Redux structure
 
-### 전형적인 Redux + Thunk 구조
+### A typical Redux + Thunk structure
 
 #### Action (Thunk)
 
@@ -48,10 +48,10 @@ export const fetchMessages = () => async (dispatch) => {
 }
 ```
 
-이 코드만 보면 “나쁘지 않아 보이는” 구조입니다.
-하지만 실제 문제는 **reducer에서 발생**했습니다.
+Looking at just this code, it's a structure that "doesn't seem too bad."
+But the real problem **arose in the reducer**.
 
-### 전형적인 Redux Reducer (문제의 핵심)
+### A typical Redux Reducer (the heart of the problem)
 
 ```ts
 // reducers/messages.ts
@@ -74,7 +74,7 @@ export default function messagesReducer(state = initialState, action) {
     case 'FETCH_MESSAGES_SUCCESS': {
       const rawMessages = action.payload.messages
 
-      // ❗ reducer 안에서 로직 가공 시작
+      // ❗ Logic processing starts inside the reducer
       const parsedMessages = rawMessages
         .filter((m) => m.is_deleted !== true)
         .map((m) => ({
@@ -106,72 +106,72 @@ export default function messagesReducer(state = initialState, action) {
 }
 ```
 
-## 이 reducer가 실제로 하고 있던 일들
+## What this reducer was actually doing
 
-이 reducer는 단순히 “상태를 업데이트”하고 있지 않았습니다.
+This reducer wasn't simply "updating state."
 
-### reducer에서 처리되고있는 것들
+### Things being handled in the reducer
 
-1. **API 스펙 의존**
-   * `content`, `user_id`, `created_at`, `is_deleted` 등 서버 필드 구조를 직접 알고 있음
-2. **데이터 필터링**
-3. **데이터 변환**
-4. **비즈니스 규칙 처리**
+1. **Dependence on the API spec**
+   * Directly knows the server field structure, such as `content`, `user_id`, `created_at`, `is_deleted`
+2. **Data filtering**
+3. **Data transformation**
+4. **Business rule handling**
 
-   * `isMine` 계산
-5. **정렬 로직**
-6. **상태 업데이트**
+   * Computing `isMine`
+5. **Sorting logic**
+6. **State updates**
 
-즉, reducer 하나가 **너무 많은 맥락과 책임**을 가지고 있었습니다.
+In other words, a single reducer was carrying **far too much context and responsibility**.
 
-## 이 구조가 실제로 만든 문제들
+## The problems this structure actually caused
 
-### 1. 디버깅 난이도 폭증
+### 1. Debugging difficulty skyrocketed
 
-UI에서 메시지 순서가 이상하면:
+When the message order looked wrong in the UI:
 
-* API 문제인지
-* reducer의 정렬 로직 문제인지
-* 날짜 파싱 문제인지
-  한 번에 판단하기 어려웠습니다.
+* Was it an API problem?
+* Was it a problem with the reducer's sorting logic?
+* Was it a date parsing problem?
+  It was hard to tell at a glance.
 
-### 2. API 스펙 변경에 취약
+### 2. Fragile against API spec changes
 
-서버에서 `created_at → createdAt`으로 변경되면
-런타임 에러가 reducer에서 바로 발생했습니다.
+When the server changed `created_at → createdAt`,
+a runtime error was thrown right in the reducer.
 
-### 3. 테스트가 사실상 불가능
+### 3. Testing was practically impossible
 
-reducer 테스트 하나에
+A single reducer test required
 
-- API payload mocking
-- state 구성
-- 날짜/정렬/비즈니스 규칙 검증
+- mocking the API payload
+- setting up state
+- verifying dates/sorting/business rules
 
-이 모두가 필요했습니다.
+all of these.
 
-## 🔎 복잡한 Reducer 를 분해하자 
+## 🔎 Let's break down the complex Reducer 
 
-문제의 원인 **Redux의 Reducer가 너무 많은 역할을 맡고 있던 구조**였습니다.
+The cause of the problem was **a structure where Redux's Reducer was taking on too many roles**.
 
-따라서 이 문제를 해결하기 위해서 다음과 같은 원칙을 세웠습니다.
+So to solve this problem, I set the following principles.
 
-### 핵심 설계 원칙
+### Core design principles
 
-1. API 호출은 **API 레이어에서만**
-2. 데이터 가공/비즈니스 로직은 **transformer(순수 함수)에서만**
-3. 상태 관리는 **store에서만**
-4. 이들을 연결하는 역할은 **UI 에서만**
+1. API calls happen **only in the API layer**
+2. Data processing/business logic happens **only in transformers (pure functions)**
+3. State management happens **only in the store**
+4. Connecting them together happens **only in the UI**
 
-즉,
+In other words,
 
-> Redux 하나가 하던 일을 `axios + transformer + store` 로 나누어 처리합니다.
+> What Redux alone used to do is split up and handled by `axios + transformer + store`.
 
-## 새 구조의 전체 아키텍처
+## Overall architecture of the new structure
 
 ```
 ┌─────────────┐
-│     UI      │  ← 흐름을 조합하여 데이터 사용
+│     UI      │  ← Combines the flow to use data
 └─────┬───────┘
       │
 ┌─────▼───────┐
@@ -209,9 +209,9 @@ export async function fetchMessages() {
   return res.data
 }
 ```
-여기서는 데이터를 절대 가공하지 않습니다.
+Here, the data is never processed.
 
-### Transformer: reducer에서 떼어낸 로직 가공
+### Transformer: logic processing pulled out of the reducer
 
 ```ts
 // transformer/messages.ts
@@ -248,14 +248,14 @@ export function transformerFetchMessages(
 }
 ```
 
-Transformer의 특징은 다음과 같습니다.
+The characteristics of a Transformer are as follows.
 
-- **순수 함수**
-- side effect 없음
-- 테스트 용이
-- API 스펙 변경 시 수정 지점 명확
+- **Pure function**
+- No side effects
+- Easy to test
+- Clear place to fix when the API spec changes
 
-### Store: Nanostores로 상태를 작게 쪼개기
+### Store: splitting state into small pieces with Nanostores
 
 ```ts
 // stores/messages.ts
@@ -265,13 +265,13 @@ import type { Message } from '../transformer/messages'
 export const $messages = atom<Message[]>([])
 ```
 
-Store는 단순한 구조로 오직 상태 관리만 수행합니다.
+The Store has a simple structure and does nothing but state management.
 
-- 비동기 없음
-- 로직 없음
-- 상태만 관리
+- No async
+- No logic
+- Manages state only
 
-### UI: API + Transformer + Store 조합
+### UI: combining API + Transformer + Store
 
 ```tsx
 import { useEffect } from 'react'
@@ -305,24 +305,24 @@ export function MessageList() {
 }
 ```
 
-UI에서는 `API`, `Transformer`, `Store` 를 직접 조합하여 데이터를 어디서 가져오고, 어디서 가공하고, 어디서 사용하는지 한 눈에 흐름을 파악할 수 있습니다. 이러한 구조 덕분에 어떠한 문제가 생긴다면 디버깅하기가 매우 편리합니다.
+In the UI, you combine `API`, `Transformer`, and `Store` directly, so you can see the whole flow at a glance — where the data comes from, where it's processed, and where it's used. Thanks to this structure, if any problem comes up, debugging is very convenient.
 
-## 점진적 마이그레이션 전략
+## Gradual migration strategy
 
-해당 프로젝트에서 Redux의 규모가 너무 컸기 때문에 Redux를 한 번에 제거할 수 없었습니다.
-다음과 같이 reducer 하나씩 점진적으로 마이그레이션하기로 결정하였습니다.
+Because Redux in this project was so large, we couldn't remove it all at once.
+We decided to migrate gradually, one reducer at a time, as follows.
 
-### 적용 순서
+### Order of application
 
-1. reducer 하나 선택
-2. 해당 reducer의 책임 분석
-3. 동일 기능을 신규 구조로 구현
-4. UI를 신규 store로 연결
-5. 기존 Redux 코드 제거
+1. Pick one reducer
+2. Analyze that reducer's responsibilities
+3. Implement the same functionality in the new structure
+4. Connect the UI to the new store
+5. Remove the old Redux code
 
-Redux와 Nanostores가 **공존 가능한 상태**를 유지하며 전환했습니다.
+We made the transition while keeping Redux and Nanostores in a **state where they could coexist**.
 
-## 결론
+## Conclusion
 
-대규모 Redux 에서 상태가 어디서 변화하고 문제가 생겼던 건지 확인하기가 매우 어려웠지만, 
-본 글에서 설명한 구조로 개선하면서 디버깅 난이도를 낮추고 가독성이 좋은 코드로 점진적으로 전환할 수 있었습니다.
+With a large-scale Redux, it was very hard to figure out where state was changing and where problems had come from, but 
+by improving things with the structure described in this post, we were able to lower the difficulty of debugging and gradually transition to more readable code.

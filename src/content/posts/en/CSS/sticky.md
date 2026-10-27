@@ -1,7 +1,7 @@
 ---
-title: 'CSS position: sticky에 대해 알아보자.'
+title: "Let's Learn About CSS position: sticky."
 pubDate: 2024-7-30
-description: 'CSS position: sticky에 대해 알아보자.'
+description: "Let's Learn About CSS position: sticky."
 author: 'dev_hee'
 image:
     url: ''
@@ -12,21 +12,21 @@ tags: ["CSS"]
 
 ## CSS Position
 
-CSS의 `position` 프로퍼티는 요소가 document에서 어떻게 위치할 것인지를 나타낸다. `position`에는 `static`, `relative`, `absolute`, `sticky` 4가지 값중 하나를 지정할 수 있다.
+The CSS `position` property indicates how an element will be positioned in the document. `position` can be set to one of 4 values: `static`, `relative`, `absolute`, `sticky`.
 
-유의해야 할 점은, 위의 4가지 값중 하나를 지정하더라도 **실질적인 요소의 위치**는 `top`, `right`, `bottom`, `left` 프로퍼티들로 지정해줘야 한다.
+One thing to note is that even if you set one of the 4 values above, **the element's actual position** has to be specified with the `top`, `right`, `bottom`, and `left` properties.
 
 ## `position: sticky;`
 
-`position: sticky;`는 `relative` 방식과 `fixed` 방식의 혼합되어 동작한다고 볼 수 있다.
+`position: sticky;` can be seen as behaving like a mix of the `relative` and `fixed` approaches.
 
-- **지정된 임계값을 넘기 이전**: 요소는 문서의 일반적인 흐름에 따라 배치된다. (`relative`와 동일)
-- **지정된 임계값을 넘긴 이후**: `top`, `right`, `bottom`, `left` 값을 기준으로 위치가 고정된다. (`fixed`와 동일)
-- 단, `sticky`는 부모 컨테이너 내부에서만 적용되며, 부모 컨테이너는 스크롤이 가능할 정도로 충분히 커야함.
+- **Before crossing the specified threshold**: The element is positioned according to the normal flow of the document. (Same as `relative`)
+- **After crossing the specified threshold**: Its position is fixed based on the `top`, `right`, `bottom`, `left` values. (Same as `fixed`)
+- However, `sticky` only applies within the parent container, and the parent container must be large enough to scroll.
 
-여기서 지정된 임계값이란, **가장 가까운 스크롤 가능한 조상 요소**를 기준으로 `top`, `right`, `bottom`, `left` 위치를 의미한다.
+Here, the specified threshold means the `top`, `right`, `bottom`, `left` position relative to **the nearest scrollable ancestor element**.
 
-일반적으론 스크롤 가능한 조상 요소가 body이기 때문에 이를 기준으로 예를들면 다음과 같다.
+Usually, the scrollable ancestor element is the body, so using it as the reference, here's an example.
 
 ```css
 .child {
@@ -41,14 +41,14 @@ CSS의 `position` 프로퍼티는 요소가 document에서 어떻게 위치할 �
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
 
-- 뷰포트가 스크롤되어 요소가 상단 `10px`에 도달하기 전 까지: 요소가 상대적으로 배치됨. (`relative`)
-- 뷰포트가 스크롤되어 요소가 상단 `10px`에 도달함: 요소가 상단에서 `10px` 로 고정됨. (`fixed`)
+- Until the viewport is scrolled and the element reaches `10px` from the top: The element is positioned relatively. (`relative`)
+- The viewport is scrolled and the element reaches `10px` from the top: The element is fixed at `10px` from the top. (`fixed`)
 
-> **단, 부모 컨테이너 경계 내에서만 `position: sticky;` 가 적용된다.** 위 예시에서 `.parent` 요소가 부모 컨테이너고 그 안에서만 `.child` 가 `sticky`하기 때문에, 부모 컨테이너가 뷰포트에서 사라지게되면 더 이상 `top: 0`에 고정되어 있지 않는다.
+> **However, `position: sticky;` only applies within the boundaries of the parent container.** In the example above, the `.parent` element is the parent container and `.child` is only `sticky` within it, so once the parent container disappears from the viewport, it's no longer fixed at `top: 0`.
 
-## 더 디테일한 예시
+## A More Detailed Example
 
-이번엔 가장 가까운 조상 요소가 스크롤 가능한 요소인 경우를 예로 들어보자.
+This time, let's take the case where the nearest ancestor element is a scrollable element as an example.
 
 <iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/kheeyaa/embed/MWMJrWy?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/kheeyaa/pen/MWMJrWy">
@@ -56,19 +56,19 @@ CSS의 `position` 프로퍼티는 요소가 document에서 어떻게 위치할 �
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
 
-위 예시에서 파란색 박스 영역에서 상하좌우 스크롤을 해보면, 아래 영상처럼 전구가 회색영역 밖으로 나가지 않는것을 확인할 수 있다.
+In the example above, if you scroll up, down, left, and right in the blue box area, you can see that the light bulb doesn't go outside the gray area, as in the video below.
 
 <video width="300" autoplay loop>
 <source src="https://github.com/user-attachments/assets/0d53ca08-8939-4794-bdb3-afa319279645" type="video/mp4">
 </video>
 
-동작하는 방식을 보면 `sticky`요소가 설정한 위치 영역(회색 영역) 밖으로는 나가지 못하는 것처럼 보인다. 그 이유는 설정한 임계값들을 넘는 곳까지 스크롤 하게되면, 그 이상을 넘어가지 못하게 고정되어 버리기 때문이다.
+Looking at how it works, the `sticky` element seems unable to go outside the configured position area (the gray area). That's because once you scroll past the configured thresholds, it gets fixed so it can't go any further.
 
 ```css
 .bulb {
   position: sticky;
   inset: 50px 100px 50px 100px;
-  /* 위의 값은 다음과 동일함.
+  /* The value above is the same as the following.
    * top: 50px;
    * right: 100px;
    * bottom: 50px;
@@ -77,15 +77,15 @@ CSS의 `position` 프로퍼티는 요소가 document에서 어떻게 위치할 �
 }
 ```
 
-해당 예제에서 작성한 `.bulb` 요소는 스크롤 가능한 `div` 요소(하늘색 배경)를 기준으로, 위로 `50px`, 오른쪽으로 `100px`, 아래로 `50px`, 왼쪽으로 `100px` 영역 안에서만 문서 흐름대로 위치할 수 있으며, 그 이상의 영역은 고정된 값(임계값)을 가지게 된다.
+The `.bulb` element written in this example can only be positioned according to the document flow within the area `50px` up, `100px` to the right, `50px` down, and `100px` to the left, relative to the scrollable `div` element (sky-blue background), and beyond that area it takes on fixed values (the thresholds).
 
-> 즉 `-50px <= y <= 50px, -100px <= x <= 100px` 사이의 영역에서만 `relative`하고 그 이상의 영역은 `fixed`다.
+> In other words, it's `relative` only in the area `-50px <= y <= 50px, -100px <= x <= 100px`, and `fixed` beyond that.
 
-정리하면, `position: sticky;`는 요소가 `fixed`처럼 고정될 영역과 `relative`처럼 일반적인 흐름에 포함될 영역을 `top`, `right`, `bottom`, `left`로 지정해주는 것과 같다.
+To sum up, `position: sticky;` is like using `top`, `right`, `bottom`, `left` to specify the area where the element will be fixed like `fixed` and the area where it'll be part of the normal flow like `relative`.
 
 
 <details>
-<summary>css 전체 코드</summary>
+<summary>Full CSS code</summary>
 
 ```css
 div {
@@ -118,7 +118,7 @@ div {
 ```
 </details>
 
-## 사용 예시
+## Usage Example
 
 <iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/kheeyaa/embed/abgpEyq?default-tab=css%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href="https://codepen.io/kheeyaa/pen/abgpEyq">
@@ -126,16 +126,16 @@ div {
   on <a href="https://codepen.io">CodePen</a>.
 </iframe>
 
-위의 예시처럼 `sticky`를 사용하여 요소가 `box` 영역 안에 붙어서 위치하도록 구현할 수 있다.
+As in the example above, you can use `sticky` to make an element stay stuck within the `box` area.
 
-- 요소의 상단이 뷰포트(body)상단에 닿기 전: 문서 흐름대로 위치 `relative`
-- 요소의 상단이 뷰포트(body)상단에 닿음: 뷰포트 상단에 고정 `fixed`
+- Before the top of the element touches the top of the viewport (body): positioned according to the document flow, `relative`
+- The top of the element touches the top of the viewport (body): fixed at the top of the viewport, `fixed`
 
-단, 요소의 부모 컨테이너 내부에서만 `sticky`를 유지함. 따라서 더 스크롤하여 뷰포트에서 부모 컨테이너가 사라지면 `stikcy` 속성을 잃어서 `top: 0`에 고정되지 않는다.
+However, it only stays `sticky` within the element's parent container. So if you scroll further and the parent container disappears from the viewport, it loses the `stikcy` property and is no longer fixed at `top: 0`.
 
-`position: sticky`는 사용자 인터페이스를 만들 때, 특히 네비게이션 바, 제목, 서브헤더 등을 스크롤할 때 항상 보이게 하고 싶을 때 유용하게 사용할 수 있다.
+`position: sticky` is useful when building user interfaces, especially when you want things like navigation bars, titles, and subheaders to always stay visible while scrolling.
 
 ---
 
 
-> 참고: https://developer.mozilla.org/en-US/docs/Web/CSS/position
+> Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/position

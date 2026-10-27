@@ -1,7 +1,7 @@
 ---
-title: 'Icon 컴포넌트 만들기 (with SVG stroke)'
+title: 'Building an Icon Component (with SVG stroke)'
 pubDate: 2022-4-7
-description: 'Icon 컴포넌트 만들기 (with SVG stroke)'
+description: 'Building an Icon Component (with SVG stroke)'
 author: 'dev_hee'
 image:
     url: 'https://velog.velcdn.com/cloudflare/heelieben/13c2a338-1752-4697-b7ba-0ff34e03191e/change-color-svg-icon.png'
@@ -10,18 +10,18 @@ tags: ["React"]
 
 ---
 
-## Icon 컴포넌트의 필요성
+## Why an Icon component is needed
 
-아이콘 SVG 이미지의 수가 많은 경우에 모든 SVG 파일을 기억하기도 쉽지 않고, 스타일링과 props를 전달하기에 번거로움이 많기 때문에 아이콘 컴포넌트를 만들기로 했다.
+When there are a lot of icon SVG images, it's not easy to remember every SVG file, and passing styling and props around is a lot of hassle, so I decided to build an icon component.
 
-## SVG 이미지를 활용하기
-SVG는 개발자가 직접 색상값과 크기 값등을 변경할 수 있기 때문에 여러개의 이미지 파일을 저장할 필요가 없다.
+## Using SVG images
+With SVG, developers can change things like the color and size values themselves, so there's no need to store multiple image files.
 
-특히 색상값을 변경하기 편리하다는 점에서 SVG를 잘 활용하는것이 좋다.
+In particular, since it's convenient for changing color values, it's good to make good use of SVG.
 
-### SVG 이미지의 색상 변경
+### Changing the color of an SVG image
 
-SVG 이미지는 아래와 같이 xml 코드로 이루어져있다.
+An SVG image is made up of xml code like the following.
 
 ```xml
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,21 +30,21 @@ SVG 이미지는 아래와 같이 xml 코드로 이루어져있다.
 </svg>
 ```
 
-여기서 SVG의 색상을 의미하는 속성값들은 다음과 같다.
+Here, the attributes that represent the SVG's colors are as follows.
 
-- `stroke` : 보통 선의 색상을 의미함
-- `fill` : 보통 어떤 영역 안의 색상을 의미하며 background-color 와 유사함
+- `stroke` : usually means the color of a line
+- `fill` : usually means the color inside some area, similar to background-color
 
-변경하는 방법은 대표적으로 아래와 같이 세 개가 있다.
-> 1. `current` 또는 `stroke`, `fill` 
+There are three typical ways to change them, as below.
+> 1. `current` or `stroke`, `fill` 
 > 2. `currentColor`
-> 3. SVG를 반환하는 컴포넌트를 만들어 props로 색상 값 받기
+> 3. Make a component that returns the SVG and receive color values as props
 
-#### 1. `current` 또는 `stroke`, `fill` 
+#### 1. `current` or `stroke`, `fill` 
 
-변경하고 싶은 값을 아래와 같이 `current` 로 지정해주면 CSS로 색상 값을 변경할 수 있다.
+If you set the value you want to change to `current` as below, you can change the color value with CSS.
 
-위의 이미지에서 `stroke="black"` -> `stroke="current"` 로 변경해주었다. 
+In the image above, I changed `stroke="black"` -> `stroke="current"`. 
 
 ```xml
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,10 +53,10 @@ SVG 이미지는 아래와 같이 xml 코드로 이루어져있다.
 </svg>
 ```
 
-또는 `stroke` 는 `stroke="stroke"` 로, `fill="fill"` 로 설정해주어도 된다.
+Alternatively, you can set `stroke` to `stroke="stroke"` and fill to `fill="fill"`.
 
-리액트를 사용하면 SVG파일을 컴포넌트로 import할 수 있다.
-가져온 SVG 컴포넌트에게 CSS 스타일을 아래와 같이 넣어주면 해당 값을 변경할 수 있다.
+With React, you can import an SVG file as a component.
+If you pass CSS styles to the imported SVG component as below, you can change those values.
 
 ```js
 import { ReactComponent as Arrow } from './arrow.svg';
@@ -64,8 +64,8 @@ import { ReactComponent as Arrow } from './arrow.svg';
 // ...
 <Arrow
 	css={{
-         stroke: 'red', // 라인 색상 변경
-         fill: 'blue', // 배경 색상 변경
+         stroke: 'red', // change line color
+         fill: 'blue', // change background color
          width: '20px'
          height: 'auto',
         }}
@@ -73,11 +73,11 @@ import { ReactComponent as Arrow } from './arrow.svg';
 
 ```
  
- > 하지만 이 방법은 문제가 존재한다. SVG 이미지가 원하지 않는 부분에 stroke, fill이 적용될 수 있기 때문이다. 따라서 보통 두번째 방법을 사용한다.
+ > But this method has a problem. stroke and fill can end up applied to parts of the SVG image you don't want. So the second method is usually used.
  
  #### 2. `currentColor`
  
- 위의 방법과 거의 유사하지만, `current` 대신에 `currentColor` 을 변경하고 싶은 구간에 넣어준다.
+ It's almost the same as the method above, but instead of `current`, you put `currentColor` in the sections you want to change.
  
  ```xml
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,7 +86,7 @@ import { ReactComponent as Arrow } from './arrow.svg';
 </svg>
 ```
 
-`currentColor` 는 css로 `color` 값을 설정 했을 경우 그 색상 값이 적용된다.
+With `currentColor`, when you set a `color` value in css, that color value gets applied.
 
 ```js
 import { ReactComponent as Arrow } from './arrow.svg';
@@ -94,7 +94,7 @@ import { ReactComponent as Arrow } from './arrow.svg';
 // ...
 <Arrow
 	css={{
-         color: 'red', // currentColor을 넣은 구간의 색상 변경
+         color: 'red', // change the color of the sections where currentColor was set
          width: '20px'
          height: 'auto',
         }}
@@ -102,16 +102,16 @@ import { ReactComponent as Arrow } from './arrow.svg';
 
 ```
 
-> 이 방법의 장점은 원치 않는 stroke와 fill이 적용되는 것을 막을 수 있다는 점이다. 하지만 color 로 변경한 단 한가지 색상만 수정할 수 있기 때문에 제약이 있다.
+> The advantage of this method is that it prevents unwanted stroke and fill from being applied. However, it's limited because you can only modify the single color you changed via color.
 
 
-#### 3. SVG를 반환하는 컴포넌트를 만들어 props로 색상 값 받기
+#### 3. Make a component that returns the SVG and receive color values as props
 
-이 방법은 위의 두 개의 방법과는 다르게 SVG를 반환하는 컴포넌트를 만든다.
+Unlike the two methods above, this method makes a component that returns the SVG.
 
-리액트를 사용하는 개발자들은 아래의 코드를 보면 한번에 이해가 될 것이다.
+Developers who use React will understand it right away when they see the code below.
 
-> 주의할 점은 `JSX` 는 props를 반드시 camel case 로 작성해주어야 한다. 따라서 `stroke-width` -> `strokeWidth` 처럼 네임을 변경해 주었다.
+> One thing to watch out for is that in `JSX`, props must be written in camel case. So I changed names like `stroke-width` -> `strokeWidth`.
 
 
 ```js
@@ -150,15 +150,15 @@ export default function Arrow({ stroke, fill }: ArrowProps): ReactElement {
 }
 ```
 
-> 이 방법은 SVG 이미지 마다 컴포넌트를 하나하나 만들어 주어야 해서, SVG 이미지가 엄청나게 많다면 상당히 번거로운 작업이 될 수 있다. 따라서 두 번째 방법을 사용하는 것을 추천한다.
+> With this method you have to make a component for every single SVG image, so if there are a huge number of SVG images it can become quite a tedious job. So I recommend using the second method.
 
 
-### SVG 이미지 동적으로 꺼내오기
+### Loading SVG images dynamically
 
-이미지 파일의 수가 많아지만 하나하나 `Import` 해서 꺼내오기 곤란하다.
-따라서 동적으로 이미지를 `Import` 하는 방법은 다음과 같다.
+As the number of image files grows, it's awkward to `Import` each one individually.
+So here's how to `Import` images dynamically.
 
-먼저 `svg` 폴더의 `index.ts` 파일을 만들어 이미지들을 다시 내보내기 한다.
+First, create an `index.ts` file in the `svg` folder and re-export the images.
 ```js
 // svg/index.ts
 export { ReactComponent as icon1 } from './icon1.svg';
@@ -169,10 +169,10 @@ export { ReactComponent as icon3 } from './icon3.svg';
 */
 ```
 
-이미지를 사용하고 싶은 파일에서 아래처럼 import 한다.
-`icons` 는 컴포넌트 이름을 `key`로, 컴포넌트 JSX를 `value` 로 가진 객체이므로 아래처럼 대괄호 표기법으로 컴포넌트에 접근할 수 있다.
+In the file where you want to use the images, import them like below.
+`icons` is an object with component names as `key`s and component JSX as `value`s, so you can access a component with bracket notation as below.
 
-2번 방식을 사용해서 css로 color을 변경해주면 SVG 이미지의 색상을 변경 가능하다.
+If you use method 2 and change the color with css, you can change the color of the SVG image.
 
 ```js
 import * as icons from './svg';
@@ -182,7 +182,7 @@ const Icon1 = icons['icon1'];
 //...
 <Icon1 
 	css={{
-         color: 'red', // 색상 변경
+         color: 'red', // change color
          width: '20px'
          height: 'auto',
         }}
@@ -190,13 +190,13 @@ const Icon1 = icons['icon1'];
 
 ```
 
-## Icon 컴포넌트 만들기
+## Building the Icon component
 
-SVG 색상을 바꾸는 두 번째 방법과, 이미지 파일을 동적으로 꺼내오는 방법을 활용하여 아래와 같이 `Icon` 컴포넌트를 만들 수 있었다.
+Using the second method for changing SVG colors and the method for loading image files dynamically, I was able to build an `Icon` component like the one below.
 
-Icon의 `iconTypes` 을 SVG 이름으로 자동으로 지정하였다.
+I set the Icon's `iconTypes` automatically from the SVG names.
 
-타입스크립트를 사용하면 `iconTypes` 로 타입을 추천 받을 수 있어서 매우 편리하게 사용할 수 있다.
+With TypeScript, you get type suggestions from `iconTypes`, which makes it very convenient to use.
 
 ```ts
 import { ReactElement } from 'react';
