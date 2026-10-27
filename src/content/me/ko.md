@@ -67,9 +67,9 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 - **기간**: 2026.03 ~ 2026.09
 - **개요**: 한국어 사용자를 위한 AI 영어 문법 학습 앱. 레벨 로드맵과 스와이프 레슨 카드로 문법을 배우고, 틀린 문제는 AI 가 해설해 준다. App Store · Google Play 출시, 가입자 1,102명
 - **링크**: [App Store](https://apps.apple.com/kr/app/%EA%B7%B8%EB%9E%98%EB%AE%A4/id6761358823) · [Google Play](https://play.google.com/store/apps/details?id=com.grameow.app)
-- **기술**: `React Native`, `TanStack Query`, `Zustand`, `NestJS`, `PostgreSQL`, `Astro`, `OpenAI API`
+- **기술**: `React Native`, `TanStack Query`, `Zustand`, `NestJS`, `PostgreSQL`, `Astro`, `OpenAI API`, `Claude Code`
 - **내용**:
-  - 기획 · UI 디자인 · 앱 · API 서버 · 웹(랜딩 · 관리자)을 혼자 맡아 출시까지 운영
+  - 기획 · UI 디자인 · 앱 · API 서버 · 웹(랜딩 · 관리자)을 혼자 맡아 출시까지 운영, 개발은 `Claude Code` 로 AI 와 함께 진행
   - 오답 해설 · 약점 분석을 `gpt-4o-mini` 로 생성하고, 호출 조건과 등급별 한도로 비용 통제
   - 커리큘럼(18챕터 · 192레슨)을 마크다운 · YAML 파일로 관리하고, 다시 넣어도 사용자 진도가 유지되도록 갱신 스크립트 작성
   - 망각곡선 기반 복습 모드, Apple · Google · 카카오 로그인, 관리자 CMS(커리큘럼 편집, DAU · MAU 집계)
@@ -89,9 +89,9 @@ UI 구현을 넘어 **유지보수 비용, 운영 안정성, 장기적인 기술
 - **기간**: 2026.05 ~ 2026.06
 - **개요**: 커플이 서로의 잠금화면 위젯과 Live Activity 에 "한 마디" 카드를 띄우는 iOS 앱. App Store 출시
 - **링크**: [App Store](https://apps.apple.com/kr/app/%ED%95%B4%EB%AA%A8/id6774156936)
-- **기술**: `Swift`, `SwiftUI`, `WidgetKit`, `ActivityKit`, `Firebase`, `Cloud Functions`
+- **기술**: `Swift`, `SwiftUI`, `WidgetKit`, `ActivityKit`, `Firebase`, `Cloud Functions`, `Claude Code`
 - **내용**:
-  - 기획 · UI 디자인 · 개발을 혼자 맡아 출시
+  - 기획 · UI 디자인 · 개발을 혼자 맡아 출시, 개발은 `Claude Code` 로 AI 와 함께 진행
   - 초대 코드로 커플을 연결하고 `Firestore` 로 양쪽 카드를 실시간 동기화
   - 푸시를 받으면 Notification Service Extension 이 위젯 데이터를 바로 갱신
   - `Cloud Functions` 에서 APNs 를 직접 호출해 잠금화면 Live Activity 를 원격 갱신
