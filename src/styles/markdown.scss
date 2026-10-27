@@ -69,6 +69,11 @@
     }
   }
 
+  // 제목에 링크가 걸려도 제목 굵기를 유지
+  :is(h1, h2, h3, h4, h5, h6) a {
+    font-weight: inherit;
+  }
+
   strong {
     color: var(--grey-900);
     font-weight: 700;

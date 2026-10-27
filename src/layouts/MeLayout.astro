@@ -17,7 +17,67 @@ const title = frontmatter.title || 'About Me';
   <section class='markdown me'>
     <slot />
   </section>
+
+  <dialog class='viewer' aria-label='스크린샷 보기'>
+    <button class='viewer-nav prev' type='button' aria-label='이전'>‹</button>
+    <img class='viewer-image' alt='' />
+    <button class='viewer-nav next' type='button' aria-label='다음'>›</button>
+  </dialog>
 </BaseLayout>
+
+<script>
+  const viewer = document.querySelector<HTMLDialogElement>('.viewer')!
+  const viewerImage = viewer.querySelector<HTMLImageElement>('.viewer-image')!
+  let images: HTMLImageElement[] = []
+  let index = 0
+
+  const show = (next: number) => {
+    index = (next + images.length) % images.length
+    viewerImage.src = images[index].src
+    viewerImage.alt = images[index].alt
+  }
+
+  document.querySelectorAll<HTMLElement>('.me .screenshots').forEach((strip) => {
+    // 캐러셀: 줄을 감싸고, 더 넘길 쪽이 있을 때만 화살표를 보여준다
+    const carousel = document.createElement('div')
+    carousel.className = 'carousel'
+    strip.before(carousel)
+    const prevButton = Object.assign(document.createElement('button'), { type: 'button', className: 'carousel-nav prev', textContent: '‹', ariaLabel: '이전 스크린샷' })
+    const nextButton = Object.assign(document.createElement('button'), { type: 'button', className: 'carousel-nav next', textContent: '›', ariaLabel: '다음 스크린샷' })
+    carousel.append(prevButton, strip, nextButton)
+
+    const updateArrows = () => {
+      prevButton.hidden = strip.scrollLeft <= 0
+      nextButton.hidden = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 1
+    }
+    prevButton.addEventListener('click', () => strip.scrollBy({ left: -strip.clientWidth * 0.8, behavior: 'smooth' }))
+    nextButton.addEventListener('click', () => strip.scrollBy({ left: strip.clientWidth * 0.8, behavior: 'smooth' }))
+    strip.addEventListener('scroll', updateArrows, { passive: true })
+    window.addEventListener('resize', updateArrows)
+    strip.querySelectorAll('img').forEach((img) => img.addEventListener('load', updateArrows))
+    updateArrows()
+
+    const stripImages = [...strip.querySelectorAll('img')]
+    stripImages.forEach((img, i) => {
+      img.addEventListener('click', () => {
+        images = stripImages
+        show(i)
+        viewer.showModal()
+      })
+    })
+  })
+
+  viewer.querySelector('.prev')!.addEventListener('click', () => show(index - 1))
+  viewer.querySelector('.next')!.addEventListener('click', () => show(index + 1))
+  viewer.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') show(index - 1)
+    if (e.key === 'ArrowRight') show(index + 1)
+  })
+  // 이미지 · 버튼 바깥(배경)을 누르면 닫기
+  viewer.addEventListener('click', (e) => {
+    if (e.target === viewer) viewer.close()
+  })
+</script>
 
 <style lang='scss'>
   .me {
@@ -31,8 +91,122 @@ const title = frontmatter.title || 'About Me';
       border-radius: 20px;
     }
 
+    // 앱 스크린샷 캐러셀 (래퍼와 화살표는 스크립트가 만든다)
+    :global(.carousel) {
+      position: relative;
+      margin: 16px 0 24px;
+    }
+
+    :global(.carousel-nav) {
+      position: absolute;
+      top: 50%;
+      z-index: 1;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transform: translateY(-50%);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.75);
+      }
+
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    :global(.carousel-nav.prev) {
+      left: 8px;
+    }
+
+    :global(.carousel-nav.next) {
+      right: 8px;
+    }
+
+    :global(.screenshots) {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      :global(img) {
+        flex: none;
+        width: 180px;
+        margin: 0;
+        border-radius: 12px;
+        cursor: zoom-in;
+        scroll-snap-align: start;
+      }
+    }
+
     @media screen and (max-width: 640px) {
       padding-top: 40px;
+    }
+  }
+
+  .viewer {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+
+    &[open] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .viewer-image {
+    max-width: calc(100vw - 120px);
+    max-height: 90vh;
+    border-radius: 16px;
+  }
+
+  .viewer-nav {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .viewer {
+      gap: 4px;
+    }
+
+    .viewer-image {
+      max-width: calc(100vw - 96px);
     }
   }
 </style>
