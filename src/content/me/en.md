@@ -40,8 +40,10 @@ With AI as a development tool, I can **take a product from planning to launch on
 - **Overview**: An enterprise collaboration service featuring thread-based communication for specific topics.
 - **Tech**: `Astro`, `React`, `TypeScript`, `Node.js`, `SCSS`, `pnpm`, `Axios`, `SSE`, `Radix UI`, `Redux`, `Nanostore`, `GitHub Actions`, `Claude Code`
 - **Key Contributions**
-  - **Legacy Modernization (React SPA)**
-    - Refactored legacy React 16 (Class Components) to Function Components and upgraded to React 18 ([Blog Post](/en/posts/react/class-to-function))
+  - **React Modernization**
+    - When I joined (early 2023), the app was built on **React 16.6 with class components**, released in October 2018 — **two major versions and over four years behind** React 18 (March 2022)
+    - As a pre-hooks (16.8) version, it couldn't use modern hook-based libraries, and even small changes had a wide blast radius, making **new feature development difficult**
+    - Migrated all class components to function components and upgraded to React 18, **restoring a codebase that can use the hook-based ecosystem** ([Blog Post](/en/posts/react/class-to-function))
   - **Astro Migration (2024.07 ~ Present, co-lead developer on a 2-person team)**
     - Introduced the `Astro` (SSR) framework to turn a large, hard-to-maintain React project into one that can be updated incrementally ([Blog Post](/en/posts/FrontEnd/astrojs))
     - Extended the Astro server into a production-ready Node server with `Sentry` error tracking
@@ -50,6 +52,11 @@ With AI as a development tool, I can **take a product from planning to launch on
     - Built a deployment and operation environment for the Astro server with `Docker` and `k8s`, later moving CI/CD to `GitHub Actions` image builds ([Blog Post](/en/posts/web/setting-infra))
     - Conducted load testing with `k6` to allocate infrastructure resources efficiently ([Blog Post](/en/posts/FrontEnd/tps-k6))
     - Built a development environment where AI works by the team's rules, using `Claude Code` sub-agents, skills, and rule documents ([Blog Post (Korean)](/ko/posts/AI/web-astro-ai-setup))
+  - **Features Built on the Modernized Foundation**
+    - **Post & comment drafts**: Auto-save and restore for every writing form, with automatic retry of failed saves when coming back online (introduced `TanStack Query`)
+    - **Received-requests Kanban board**: List / Kanban view toggle, with optimistic updates that move cards on screen before the server responds
+    - **Away-on-vacation access alert**: A modal triggered by real-time `SSE` events, with the confirmation state synced across browser tabs
+    - **Group join settings popup**: Set category and notifications while joining, with on-the-spot category creation
 
 ## Side Projects
 
