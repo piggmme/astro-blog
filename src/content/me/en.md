@@ -4,23 +4,29 @@ title: 'About Me'
 
 # @dev_hee
 
+**Kang Hee** · Jun 30, 1998
+
 <img width="500" src="/images/me.jpeg" />
 
 ## About Me
 
-I am a frontend engineer specializing in **modernizing legacy React-based services using React 18, Astro, and TypeScript**. I focus on building **scalable and debuggable architectures** by optimizing state management, real-time communication, and deployment environments. Beyond UI implementation, I prioritize **maintenance costs, operational stability, and long-term technical extensibility**.
+I'm a frontend engineer who has **modernized a legacy React service with Astro and TypeScript**, working across state management, real-time communication, and deployment.<br/>
+I care about **maintenance cost and operational stability**, and focus on building structures that are easy to debug.<br/>
+With AI as a development tool, I can **take a product from planning to launch on my own, fast**, and I **design the UI, illustrations, and app assets myself**.
 
 ## Tech Stack
 
 - **Frontend**: `React`, `TypeScript`, `Astro`
 - **State / Data**: `Nanostore` (Astro), `Redux` (Legacy), `Tanstack Query`
-- **Infra / DevOps**: `Docker`, `Kubernetes`, `k6`
+- **Server**: `Node.js` (Astro SSR), `NestJS`
+- **Infra / DevOps**: `Docker`, `Kubernetes`, `GitHub Actions`, `k6`
 - **Real-time**: Server-Sent Events (SSE)
-- **Test**: `Playwright`
+- **Test**: `Vitest`, `Storybook`, `Playwright`
+- **AI**: `Claude Code`, `GitHub Copilot`, `OpenAI API`
 
 ## Strength Summary
 
-- Improving legacy technology stacks with a focus on **maintenance costs and structural stability**.
+- Improving legacy technology stacks with a focus on **maintenance costs and structural stability**, not just swapping tools.
 - Understanding and explaining state, async, real-time, and deployment flows as **a single cohesive system**.
 - Focusing on building **reliable, production-ready architectures** rather than just "working code."
 
@@ -32,27 +38,78 @@ I am a frontend engineer specializing in **modernizing legacy React-based servic
 
 - **Period**: 2023.01 ~ Present
 - **Overview**: An enterprise collaboration service featuring thread-based communication for specific topics.
-- **Tech**: `Astro`, `React`, `TypeScript`, `SCSS`, `pnpm`, `Axios`, `SSE`, `Radix UI`, `Redux`, `Nanostore`
+- **Tech**: `Astro`, `React`, `TypeScript`, `Node.js`, `SCSS`, `pnpm`, `Axios`, `SSE`, `Radix UI`, `Redux`, `Nanostore`, `GitHub Actions`, `Claude Code`
 - **Key Contributions**
-  - Refactored legacy React 16 (Class Components) to React 18 (Functional Components) ([Blog Post](/en/posts/react/class-to-function))
-  - Led a large-scale refactoring of complex `Redux` state into a functional `API` + `Transformer` + `Store` structure for improved readability and debugging ([Blog Post](/en/posts/react/redux-to-nanostore))
-  - Introduced the `Astro` (SSR) framework to enable incremental updates for a large-scale project ([Blog Post](/en/posts/FrontEnd/astrojs))
-  - Established a deployment and operation environment for Astro servers using `Docker` and `k8s` ([Blog Post](/en/posts/web/setting-infra))
-  - Conducted load testing with `k6` to optimize infrastructure resource allocation ([Blog Post](/en/posts/FrontEnd/tps-k6))
-  - Migrated from `Web Socket` (Phoenix) to `SSE` to significantly reduce server costs ([Blog Post](/en/posts/web/sse))
+  - **Legacy Modernization (React SPA)**
+    - Refactored legacy React 16 (Class Components) to Function Components and upgraded to React 18 ([Blog Post](/en/posts/react/class-to-function))
+  - **Astro Migration (2024.07 ~ Present, co-lead developer on a 2-person team)**
+    - Introduced the `Astro` (SSR) framework to turn a large, hard-to-maintain React project into one that can be updated incrementally ([Blog Post](/en/posts/FrontEnd/astrojs))
+    - Extended the Astro server into a production-ready Node server with `Sentry` error tracking
+    - Removed the complex `Redux` · `RxJS` state layer and migrated to `Nanostore` ([Blog Post 1](/en/posts/react/redux-to-nanostore), [Blog Post 2 (Korean)](/ko/posts/react/remove-transformer))
+    - Migrated from costly `Web Socket` (Phoenix) to `SSE` ([Blog Post](/en/posts/web/sse))
+    - Built a deployment and operation environment for the Astro server with `Docker` and `k8s`, later moving CI/CD to `GitHub Actions` image builds ([Blog Post](/en/posts/web/setting-infra))
+    - Conducted load testing with `k6` to allocate infrastructure resources efficiently ([Blog Post](/en/posts/FrontEnd/tps-k6))
+    - Built a development environment where AI works by the team's rules, using `Claude Code` sub-agents, skills, and rule documents ([Blog Post (Korean)](/ko/posts/AI/web-astro-ai-setup))
 
 ## Side Projects
+
+### [Grameow](https://grameow-web.vercel.app)
+
+<div class="screenshots">
+  <img loading="lazy" src="/images/grameow/grameow-1.png" alt="Grameow start screen" />
+  <img loading="lazy" src="/images/grameow/grameow-2.png" alt="Grameow home" />
+  <img loading="lazy" src="/images/grameow/grameow-3.png" alt="Grameow my lessons" />
+  <img loading="lazy" src="/images/grameow/grameow-4.png" alt="Grameow AI explanation" />
+  <img loading="lazy" src="/images/grameow/grameow-5.png" alt="Grameow lesson" />
+  <img loading="lazy" src="/images/grameow/grameow-6.png" alt="Grameow learning analytics" />
+  <img loading="lazy" src="/images/grameow/grameow-7.png" alt="Grameow AI weakness analysis" />
+  <img loading="lazy" src="/images/grameow/grameow-8.png" alt="Grameow learning calendar" />
+</div>
+
+- **Period**: 2026.03 ~ 2026.09
+- **Overview**: An AI-powered English grammar app for Korean speakers. Users learn grammar through a level roadmap and swipeable lesson cards, and AI explains the questions they got wrong. Launched on the App Store and Google Play with 1,102 sign-ups.
+- **Links**: [App Store](https://apps.apple.com/kr/app/%EA%B7%B8%EB%9E%98%EB%AE%A4/id6761358823) · [Google Play](https://play.google.com/store/apps/details?id=com.grameow.app)
+- **Tech**: `React Native`, `TanStack Query`, `Zustand`, `NestJS`, `PostgreSQL`, `Astro`, `OpenAI API`, `Claude Code`
+- **Key Contributions**:
+  - Handled planning, UI design, the app, the API server, and the web (landing and admin) alone through launch and operation, developing with AI using `Claude Code`
+  - Generated wrong-answer explanations and weakness analysis with `gpt-4o-mini`, controlling cost with call conditions and per-tier limits
+  - Managed the curriculum (18 chapters, 192 lessons) as Markdown and YAML files, with an update script that keeps user progress intact on re-import
+  - Spaced-repetition review mode, Apple · Google · Kakao login, and an admin CMS (curriculum editing, DAU · MAU stats)
+
+### Heymo
+
+<div class="screenshots">
+  <img loading="lazy" src="/images/heymo/heymo-1.png" alt="Heymo screenshot 1" />
+  <img loading="lazy" src="/images/heymo/heymo-2.png" alt="Heymo screenshot 2" />
+  <img loading="lazy" src="/images/heymo/heymo-3.png" alt="Heymo screenshot 3" />
+  <img loading="lazy" src="/images/heymo/heymo-4.png" alt="Heymo screenshot 4" />
+  <img loading="lazy" src="/images/heymo/heymo-5.png" alt="Heymo screenshot 5" />
+  <img loading="lazy" src="/images/heymo/heymo-6.png" alt="Heymo screenshot 6" />
+  <img loading="lazy" src="/images/heymo/heymo-7.png" alt="Heymo screenshot 7" />
+</div>
+
+- **Period**: 2026.05 ~ 2026.06
+- **Overview**: An iOS app that lets couples put a short "one-line" card on each other's lock-screen widget and Live Activity. Launched on the App Store.
+- **Links**: [App Store](https://apps.apple.com/kr/app/%ED%95%B4%EB%AA%A8/id6774156936)
+- **Tech**: `Swift`, `SwiftUI`, `WidgetKit`, `ActivityKit`, `Firebase`, `Cloud Functions`, `Claude Code`
+- **Key Contributions**:
+  - Handled planning, UI design, and development alone through launch, developing with AI using `Claude Code`
+  - Connected couples with invite codes and synced both cards in real time with `Firestore`
+  - Updated widget data immediately on push via a Notification Service Extension
+  - Called APNs directly from `Cloud Functions` to update the lock-screen Live Activity remotely
+  - Photo + text cards, font and color customization, emoji reactions
 
 ### [DevJeans](https://devjeans.dev-hee.com/)
 
 <img width="500" src="/images/devjeans.png" />
 
 - **Period**: 2023.03 ~ 2023.08
-- **Overview**: A character customization service (NewJeans Bunnies) that reached a peak DAU of 35,000.
+- **Overview**: A side project for dressing up and sharing your own NewJeans Bunny character, which reached a peak DAU of 35,000.
 - **Tech**: `Svelte`, `Fabric.js`, `TypeScript`
 - **Key Contributions**:
-  - Leveraged `Svelte` for rapid development and high performance.
-  - Implemented character styling and drawing features using `Fabric.js` (Canvas API).
+  - Drew the character, outfit, and accessory illustrations and designed the UI myself
+  - Leveraged `Svelte` for rapid development
+  - Implemented outfit swapping and drawing features using `Fabric.js` (Canvas API)
 
 ---
 
@@ -73,13 +130,16 @@ I am a frontend engineer specializing in **modernizing legacy React-based servic
 
 ### 2. State Management & Structural Refactoring
 
-> [Moving Away from Complex Redux](/en/posts/react/redux-to-nanostore)
+> - [Moving Away from Complex Redux](/en/posts/react/redux-to-nanostore)
+> - [Removing the Transformer Layer (Korean)](/ko/posts/react/remove-transformer)
 
 - Recognized the difficulty in tracking state changes when **asynchronous logic was heavily concentrated in Redux middleware**.
 - Performed an **incremental migration from large-scale Redux global state to Nano Store**.
 - Transitioned to a **side-effect-free functional structure** by separating async API calls, data transformation, and state updates.
 - Decoupled API response processing from reducers into **pure transformer functions**:
   - Minimized the impact of API specification changes.
+- Later found that the transformers **hid where state actually changed**, and removed them:
+  - Reorganized so that a single request function shows the request → state change → rollback on failure.
 - Transitioned JavaScript-based state management to **TypeScript + Nano Store**:
   - Clarified state dependencies.
   - Reduced debugging difficulty and maintenance costs.
@@ -104,6 +164,17 @@ I am a frontend engineer specializing in **modernizing legacy React-based servic
 - Designed and executed **k6-based load tests** for Astro SSR service operations:
   - Constructed test scenarios by converting actual traffic into RPS units.
   - Configured an **environment capable of stable operation with minimal resources** based on test results.
+- Moved **CI/CD to GitHub Actions-based image builds and deployment** when the in-house build service was retired.
+- Switched SSR server request logs to **structured JSON logs** with user, browser, and IP information, so failing requests can be traced per user.
+
+### 5. AI Development Environment
+
+> [Making AI Agents Work by the Team's Rules (Korean)](/ko/posts/AI/web-astro-ai-setup)
+
+- Reduced `CLAUDE.md` to a table of contents and split detailed rules into separate documents, designing a structure where **the main session only orchestrates and sub-agents handle repetitive work**.
+- Wrote **role-specific sub-agents and skills**, such as an agent that diagnoses bugs and fixes them only after approval, and an i18n agent that updates all four locales at once.
+- Recorded **why each rule exists, with dates**, so both people and AI understand the background of every rule.
+- Applied the same approach to side projects (Grameow · Heymo) to speed up solo development — Grameow's app, server, and web were all built and launched alone.
 
 ---
 
@@ -111,3 +182,11 @@ I am a frontend engineer specializing in **modernizing legacy React-based servic
 
 ### Hankuk University of Foreign Studies (Mar 2018 ~ Aug 2022)
 - B.S. in Electronic Engineering
+
+## Language
+
+- **English**: Conversational for everyday situations, and studying consistently
+
+## Hobby
+
+- **Drawing**: I also design the UI for my side projects myself
